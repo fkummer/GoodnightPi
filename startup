@@ -1,2 +1,2 @@
-cd /home/pi/final
+cd /home/pi/final/GoodnightPi
 sudo ./on_led
