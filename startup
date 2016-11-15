@@ -1,0 +1,2 @@
+cd /home/pi/final
+sudo ./on_led
