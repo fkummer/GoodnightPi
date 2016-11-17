@@ -4,9 +4,12 @@
 // what to do with incoming data
 volatile byte command = 0;
 
+unsigned char SPI_buff[11];
+volatile byte pos = 0;
+
 void setup (void)
 {
-  Serial.begin(115200)
+  Serial.begin(115200);
   // have to send on master in, *slave out*
   pinMode(MISO, OUTPUT);
 
@@ -22,16 +25,21 @@ void setup (void)
 // SPI interrupt routine
 ISR (SPI_STC_vect)
 {
-  byte c = SPDR;
-  Serial.println(c);
-  SPDR = 'a';
+  if(pos < 11){
+    SPI_buff[pos] = SPDR;
+    pos = pos + 1;
+  }else{
+     pos = 0;
+     for(int i = 0; i < 11; i++){
+        Serial.print(SPI_buff[i]);
+     }
+     Serial.println('');
+    
+  }
 
 }  // end of interrupt service routine (ISR) SPI_STC_vect
 
 void loop (void)
 {
   
-  // if SPI not active, clear current command
-  if (digitalRead (SS) == HIGH)
-    command = 0;
 }  // end of loop
