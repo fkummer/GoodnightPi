@@ -72,8 +72,8 @@ static const int CHANNEL = 1;
 int main()
 {
    int fd, result;
-   unsigned char buffer[100];
-
+   unsigned char buffer[11];
+  
    cout << "Initializing" << endl ;
 
    // Configure the interface.
@@ -84,9 +84,11 @@ int main()
    cout << "Init result: " << fd << endl;
 
    while(1){
-	   buffer[0] = 'R';
+	   buffer = "abcdefghij";
+	   cout << buffer << endl;
 	   wiringPiSPIDataRW(CHANNEL, buffer, 1);
-
+	   
+	   
 	   sleep(1);
    }
 
