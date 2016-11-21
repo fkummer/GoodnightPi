@@ -37,12 +37,9 @@ byte c = SPDR;  // grab byte from SPI Data Register
   if (pos < sizeof buf)
     {
     buf [pos++] = c;
-    
-    // example: newline means time to process buffer
-    if (c == '\n')
-      process_it = true;
-      
-    }  // end of room available
+    process_it = true;
+    }
+
 }  // end of interrupt routine SPI_STC_vect
 
 // main loop - wait for flag set in interrupt routine

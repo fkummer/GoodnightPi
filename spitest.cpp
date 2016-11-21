@@ -60,6 +60,7 @@ Distributed as-is; no warranty is given.
 
 #include <iostream>
 #include <errno.h>
+#include <wiringPi.h>
 #include <wiringPiSPI.h>
 #include <unistd.h>
 
@@ -69,11 +70,60 @@ using namespace std;
 // Set this to 0 or 1, depending on how it's connected.
 static const int CHANNEL = 1;
 
+
+
+unsigned char transferAndWait(unsigned char msg){
+	wiringPiSPIDataRW(CHANNEL, &msg, 1);
+	delayMicroseconds(20);
+}
+
+void clearBuffer(unsigned char * buff, int len){
+   int j;
+   for(j = 0; j < len; j++){
+		buff[j] = 0;
+   }
+}
+
+void copyBuffer(unsigned char * dest, unsigned char * src, int len){
+   int i;
+   for(i = 0; i < len; i++){
+       dest[i] = src[i];
+   }
+}
+
+void transferPacket(unsigned char * buff, int len){
+	int i = 0;
+	for(i = 0; i < len; i++){
+		transferAndWait(buff[i]);
+	}
+}
+
+void receivePacket(unsigned char * buff, int len){
+	int i = 0;
+	//Create junk to send
+	for(i = 0; i < len; i++){
+		buff[i] = 0xFF;
+	}
+	
+	//Do this nice and easy, one byte at a time.
+	int j = 0;
+	for(j = 0; j < len; j++){
+		//Each is a "buffer" of size 1 that gets overwritten
+		transferAndWait(buff[i]);
+	}
+	
+}
+
 int main()
 {
    int fd, result;
-   unsigned char buffer[100];
-
+   unsigned char string[] = {'a','b','c','d','e','f','g','h','i','j'};
+   unsigned char sendBuffer[11];
+   unsigned char receiveBuffer[11];
+   
+   clearBuffer(sendBuffer, 11);
+   clearBuffer(receiveBuffer, 11);
+   
    cout << "Initializing" << endl ;
 
    // Configure the interface.
@@ -82,12 +132,21 @@ int main()
    fd = wiringPiSPISetup(CHANNEL, 500000);
 
    cout << "Init result: " << fd << endl;
-
+   
+   
    while(1){
-	   buffer[0] = 'R';
-	   wiringPiSPIDataRW(CHANNEL, buffer, 1);
-
-	   sleep(1);
+	   copyBuffer(sendBuffer, string, 11);
+	   cout << "Sending" << endl;
+	   cout << sendBuffer << endl;
+	   transferPacket(sendBuffer, 11);
+	   sleep(5);
+	   receivePacket(receiveBuffer, 11);
+	   cout << "Received" << endl;
+	   cout << receiveBuffer << endl;
+	   sleep(5);
+	   
+	   
+	   
    }
 
 }

@@ -8,7 +8,7 @@ volatile byte command[11];
 void setup (void)
 {
   Serial.begin(9600);
-  
+
   // have to send on master in, *slave out*
   pinMode(MISO, OUTPUT);
 
