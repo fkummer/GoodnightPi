@@ -4,8 +4,6 @@
 
 RTC_DS1307 rtc;
 
-
-#define DEBUG 1
 #define LED   13
 
 void setup() {
