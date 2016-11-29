@@ -2,10 +2,13 @@
 // April 2011
 #include <SPI.h>
 
-volatile unsigned char SPI_buff[99];
+volatile unsigned char SPI_buff[100];
 volatile byte cnt = 0;
 volatile byte pos = 0;
 volatile byte resp = 0;
+volatile byte incoming = 0;
+volatile byte outgoing = 0;
+volatile unsigned char resp_buff[11];
 
 void setup (void)
 {
@@ -27,15 +30,31 @@ void setup (void)
 //Capture what is coming in. 
 ISR (SPI_STC_vect)
 {
-  if(pos > 98){
+  //Serial.println("caw");
+  if(pos > 99){
     pos = 0;
   }
   
-  cnt++;
-  SPI_buff[pos] = SPDR;
-  pos++;
+  //If we are receiving a packet
+  if(incoming){
+    cnt++;
+    //Serial.println(SPDR);
+    SPI_buff[pos] = SPDR;
+    pos++;
+    if(cnt >= 11){
+      incoming = 0;
+      outgoing = 1;
+    }
+  }else{//Look for start byte
+    if(SPDR == 0xFE){
+      incoming = 1;
+      outgoing = 0;
+      cnt = 0;
+    }
+  }
   
-  if(resp){
+  //The master is asking us for a response and we expect to return one.
+  if(SPDR == 0xFF && outgoing){
     SPDR = 'Y';
   }
   
@@ -43,21 +62,26 @@ ISR (SPI_STC_vect)
 
 void loop (void)
 {
-  //Received a packet
-  if(cnt == 11 && !resp){  
+  //Received a full packet, lets print it
+  //We should also get our response ready!
+  if(cnt == 11){  
+    //Print out the packet
     Serial.println(pos);
-    for(int i = pos - 11; i < pos; i++){
-      Serial.write(SPI_buff[i]);
+    byte ind = (pos-11)%100;
+    for(int i = 0; i < 11; i++){
+      
+      if(ind > 99){
+        ind = 0;
+      }
+      //Serial.println(ind);
+      Serial.write(SPI_buff[ind]);
+      
+      ind++;
     }
     Serial.print("\n");
     cnt = 0;
-    resp = 1;
-  }else{
-    if(cnt == 11 && resp){
-      //We sent back out our response, listen again
-      Serial.println("We did it reddit");
-      resp = 0;
-      cnt = 0;
-    }
+    
+    //Ready our response!
+    
   }
-}  // end of loop
+}
