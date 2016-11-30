@@ -56,9 +56,12 @@ int main(){
 			
 			//Put the 4 bytes together to recover the time
 			int k;
-			for( k = 4; k--; k > 0){
+			for( k = 4; k > 0; k--){
+				printf("%i", resp[k]);
 				timeInterval = timeInterval | resp[k];
-				timeInterval = timeInterval << 8;
+				if(k > 1){
+					timeInterval = timeInterval << 8;
+				}
 			}
 			
 			int0 = resp[5];
@@ -67,6 +70,7 @@ int main(){
 			//If a timer set us off
 			if(timeInterval != 0){
 				printf("Timer\n");
+				printf("%ld", timeInterval);
 			}else{
 				//If interrupt 0 set us off
 				if(int0){
