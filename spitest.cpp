@@ -135,7 +135,8 @@ int main()
 {
    int fd, result;
    
-   unsigned char string[] = {'a','b','c','d','e','f','g','h','i','j','\0'};
+   unsigned char string[] = {0x00,'b','c','d','e','f','g','h','i','j','\0'};
+   
    cout << string << endl; 
    
    printf("Initializing\n");
@@ -149,9 +150,11 @@ int main()
 	   unsigned char sendBuffer[11];
 	   unsigned char receiveBuffer[11];
 	   
+	   
 	   clearBuffer(sendBuffer, 11);
 	   clearBuffer(receiveBuffer, 11);
 	   
+	   string[0] = (string [0] + 0x02)%0x08; 
 	   copyBuffer(sendBuffer, string, 11);
 	  
 	   
@@ -171,6 +174,8 @@ int main()
 	   
 	   
 	   printf("Received\n");
+	   printf("OpCode: ");
+	   printf("%#03x\n", receiveBuffer[0]);
 	   cout << receiveBuffer << endl;
 	   int k = 0;
 	   ////for(k = 0;k<11;k++){
