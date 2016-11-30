@@ -8,7 +8,8 @@ volatile byte pos = 0;
 volatile byte resp = 0;
 volatile byte incoming = 0;
 volatile byte outgoing = 0;
-volatile unsigned char resp_buff[11];
+unsigned char resp_buff[11];
+volatile unsigned char recv_packet[11];
 volatile byte resp_ind = 0;
 
 #define PACKET_LEN 11
@@ -79,16 +80,74 @@ byte getOpCode(byte receivedOpCode){
     case 0x02:
       return 0x03;
       break;
-    case 
-    
+    case 0x04:
+      return 0x05;
+      break;
+    case 0x06:
+      return 0x07;
+      break;
+    default: 
+      return 0xFF;
+      break;
+  }
+}  
+
+void fillPayload(byte opCode, unsigned char * buff){
+  switch (opCode){
+    case 0x01: //WAKE_RESP
+      //4 bytes for the time interval that woke it
+      buff[1] = 'q';
+      buff[2] = 'r';
+      buff[3] = 's';
+      buff[4] = 't';
       
+      //1 byte for if interrupt 0 woke it or not
+      buff[5] = 'u';
+      
+      //1 byte for if interrupt 1 woke it or not
+      buff[6] = 'v';
+      
+      //4 empty bytes
+      buff[7] = 'w';
+      buff[8] = 'x';
+      buff[9] = 'y';
+      buff[10] = 0x00;
+      
+      break;
+      
+    case 0x03: //SLEEP_RESP
+      fillEmpty(buff);
+      break;
+      
+    case 0x05: //CONFIG_RESP
+      fillEmpty(buff);
+      break; 
+    
+    case 0x07: //PING_RESP
+      fillEmpty(buff);
+      break;
+    
+    default:
+      fillEmpty(buff);
+      break;
+  }
+ 
+} 
+
+//Specifically for populating empty payloads, since its so common.
+void fillEmpty(unsigned char * buff){
+  byte buff_ind;
+  for(buff_ind = 1; buff_ind < PACKET_LEN; buff_ind++){
+    buff[buff_ind] = 0x00;
+  }
+}
+
 void loop (void)
 {
   //Received a full packet, lets print it
   //We should also get our response ready!
   if(cnt == PACKET_LEN){  
     //Print out the packet
-    Serial.println(pos);
     byte ind;
     
     if(pos < PACKET_LEN){
@@ -96,47 +155,26 @@ void loop (void)
     }else{
       ind = (pos-PACKET_LEN)%100;
     }
-    Serial.println("Init ind");
-    Serial.println(ind);
-    //}else{
-    //  ind = ((pos-12)%100) ;
-    //}
     
     for(int i = 0; i < PACKET_LEN; i++){
-      
       if(ind > 99){
         ind = 0;
       }
+      recv_packet[i] = SPI_buff[ind];
       //Serial.println(ind);
       Serial.write(SPI_buff[ind]);
-      
       ind++;
     }
     Serial.print("\n");
     cnt = 0;
-    
 
     if(outgoing){
-      //Serial.println("Prep out");
-      unsigned char resp_string[]
-    = {'l','m','n','o','p','q','r','s','t','u','\0'};
-      for(int k = 0; k<PACKET_LEN;k++){
-//        if(k%2 == 0){
-//          resp_buff[k] = 'Y';
-//        }else{
-//          resp_buff[k] = 'W';
-//        }
-          resp_buff[k] = resp_string[k];
-      }
-      
+
+      resp_buff[0] = getOpCode(recv_packet[0]);
+      fillPayload(resp_buff[0], resp_buff); 
       SPDR = resp_buff[0];
       resp_ind = 1;
       outgoing = 0;
-
     }
-      
-      
-    
-    
   }
 }
