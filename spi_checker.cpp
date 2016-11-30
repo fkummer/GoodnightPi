@@ -6,6 +6,7 @@
 #include <wiringPiSPI.h>
 #include <unistd.h>
 #include <stdio.h>
+#include "raspi_spi.h"
 
 #define START_BYTE 0xFE
 
