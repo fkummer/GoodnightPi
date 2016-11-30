@@ -96,21 +96,21 @@ void fillPayload(byte opCode, unsigned char * buff){
   switch (opCode){
     case 0x01: //WAKE_RESP
       //4 bytes for the time interval that woke it
-      buff[1] = 'q';
-      buff[2] = 'r';
-      buff[3] = 's';
-      buff[4] = 't';
+      buff[1] = 'w';
+      buff[2] = 'a';
+      buff[3] = 'k';
+      buff[4] = 'e';
       
       //1 byte for if interrupt 0 woke it or not
-      buff[5] = 'u';
+      buff[5] = 'm';
       
       //1 byte for if interrupt 1 woke it or not
-      buff[6] = 'v';
+      buff[6] = 'e';
       
       //4 empty bytes
-      buff[7] = 'w';
-      buff[8] = 'x';
-      buff[9] = 'y';
+      buff[7] = 'u';
+      buff[8] = 'p';
+      buff[9] = '!';
       buff[10] = 0x00;
       
       break;
@@ -138,7 +138,7 @@ void fillPayload(byte opCode, unsigned char * buff){
 void fillEmpty(unsigned char * buff){
   byte buff_ind;
   for(buff_ind = 1; buff_ind < PACKET_LEN; buff_ind++){
-    buff[buff_ind] = 0x00;
+    buff[buff_ind] = 'a';
   }
 }
 
