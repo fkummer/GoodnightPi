@@ -6,6 +6,7 @@
 #include <wiringPiSPI.h>
 #include <unistd.h>
 #include <stdio.h>
+#include "raspi_spi.h"
 
 #define START_BYTE 0xFE
 
@@ -168,72 +169,72 @@ void pingRequest(unsigned char * pingResp){
 	sendRequest(pingReq, pingResp);
 }
 
-int main()
-{
-   int fd, result;
+//int main()
+//{
+   //int fd, result;
    
-   printf("Initializing\n");
+   //printf("Initializing\n");
 
-   // Configure the interface.
-   // CHANNEL insicates chip select,
-   // 500000 indicates bus speed.
-   fd = wiringPiSPISetup(CHANNEL, 500000);
+   //// Configure the interface.
+   //// CHANNEL insicates chip select,
+   //// 500000 indicates bus speed.
+   //fd = wiringPiSPISetup(CHANNEL, 500000);
    
-   while(1){
-		sleep(2);
-		unsigned char result[11];
+   //while(1){
+		//sleep(2);
+		//unsigned char result[11];
 		
-		printf("Wake\n");
-		wakeRequest(result);
-		if(result[0] == 0x01){
-			int i;
-			for(i = 1; i < 11; i++){
-				printf("%c",result[i]);
-			}
-			printf("\n");
-		}else{
-			printf("Wake Fail\n");
-		}
-		sleep(2);
+		//printf("Wake\n");
+		//wakeRequest(result);
+		//if(result[0] == 0x01){
+			//int i;
+			//for(i = 1; i < 11; i++){
+				//printf("%c",result[i]);
+			//}
+			//printf("\n");
+		//}else{
+			//printf("Wake Fail\n");
+		//}
+		//sleep(2);
 		
-		printf("Sleep\n");
-		sleepRequest(result);
-		if(result[0] == 0x03){
-			int i;
-			for(i = 1; i < 11; i++){
-				printf("%c",result[i]);
-			}
-			printf("\n");
-		}else{
-			printf("Sleep Fail\n");
-		}
-		sleep(2);
+		//printf("Sleep\n");
+		//sleepRequest(result);
+		//if(result[0] == 0x03){
+			//int i;
+			//for(i = 1; i < 11; i++){
+				//printf("%c",result[i]);
+			//}
+			//printf("\n");
+		//}else{
+			//printf("Sleep Fail\n");
+		//}
+		//sleep(2);
 		
-		printf("Config\n");
-		configRequest(result,1000, 0, 0, 0, 0);
-		if(result[0] == 0x05){
-			int i;
-			for(i = 1; i < 11; i++){
-				printf("%c",result[i]);
-			}
-			printf("\n");
-		}else{
-			printf("Config Fail\n");
-		}
-		sleep(2);
+		//printf("Config\n");
+		//configRequest(result,1000, 0, 0, 0, 0);
+		//if(result[0] == 0x05){
+			//int i;
+			//for(i = 1; i < 11; i++){
+				//printf("%c",result[i]);
+			//}
+			//printf("\n");
+		//}else{
+			//printf("Config Fail\n");
+		//}
+		//sleep(2);
 		
-		printf("Ping\n");
-		pingRequest(result);
-		if(result[0] == 0x07){
-			int i;
-			for(i = 1; i < 11; i++){
-				printf("%c",result[i]);
-			}
-			printf("\n");
-		}else{
-			printf("Ping Fail\n");
-		}
-		sleep(2);
-   }
+		//printf("Ping\n");
+		//pingRequest(result);
+		//if(result[0] == 0x07){
+			//int i;
+			//for(i = 1; i < 11; i++){
+				//printf("%c",result[i]);
+			//}
+			//printf("\n");
+		//}else{
+			//printf("Ping Fail\n");
+		//}
+		//sleep(2);
+   //}
 
-}
+//}
