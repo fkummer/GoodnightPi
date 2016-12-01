@@ -1,6 +1,15 @@
 
+#include "Wire.h"
+#include <RTClib.h>
 #include <SPI.h>
 
+//Variables for I2C
+RTC_DS1307 rtc;
+long wakeTime;
+char timeSet = 0;
+char ledState = 0;
+
+//Variables for SPI
 volatile unsigned char SPI_buff[100];
 volatile byte cnt = 0;
 volatile byte pos = 0;
@@ -11,29 +20,16 @@ unsigned char resp_buff[11];
 volatile unsigned char recv_packet[11];
 volatile byte resp_ind = 0;
 
+//Is Pi awake
+boolean awake = 1;
+
+#define LED   7
 #define PACKET_LEN 11
-
-void setup (void)
-{
-  Serial.begin(115200);
-  SPI.setClockDivider(SPI_CLOCK_DIV32);
-  // have to send on master in, *slave out*
-  pinMode(MISO, OUTPUT);
-
-  // turn on SPI in slave mode
-  SPCR |= _BV(SPE);
-
-  // turn on interrupts
-  SPCR |= _BV(SPIE);
-
-}  // end of setup
-
 
 // SPI interrupt routine
 //Capture what is coming in. 
 ISR (SPI_STC_vect)
 {
-  //Serial.println("caw");
   if(pos > 99){
     pos = 0;
   }
@@ -69,7 +65,7 @@ ISR (SPI_STC_vect)
     resp_ind++;
   }
   
-}  // end of interrupt service routine (ISR) SPI_STC_vect
+}// end of interrupt service routine (ISR) SPI_STC_vect
 
 byte getOpCode(byte receivedOpCode){
   switch (receivedOpCode){
@@ -141,8 +137,28 @@ void fillEmpty(unsigned char * buff){
   }
 }
 
-void loop (void)
-{
+//Pass in the number of seconds until next wake up, calculate 
+//the appropriate unix time for to wake up. Set the timer flag
+void setWakeupTime(long seconds){
+  wakeTime = rtc.now().unixtime() + seconds;
+  timeSet = 1;
+}
+
+boolean checkWakeup(){
+  if(timeSet){
+    Serial.println("in");
+    if(rtc.now().unixtime() >= wakeTime){
+      //Time to get up!
+     return true;
+     timeSet = 0;
+    }else{
+     return false;
+    }
+  }
+  return false;
+}
+
+void handleSPI(){
   //Received a full packet, lets print it
   //We should also get our response ready!
   if(cnt == PACKET_LEN){  
@@ -160,20 +176,56 @@ void loop (void)
         ind = 0;
       }
       recv_packet[i] = SPI_buff[ind];
-      //Serial.println(ind);
-      Serial.write(SPI_buff[ind]);
       ind++;
     }
-    Serial.print("\n");
     cnt = 0;
 
     if(outgoing){
-
       resp_buff[0] = getOpCode(recv_packet[0]);
       fillPayload(resp_buff[0], resp_buff); 
       SPDR = resp_buff[0];
       resp_ind = 1;
       outgoing = 0;
     }
+  }
+}
+
+
+void setup() {
+  Serial.begin(115200);
+  
+  //SPI setup
+  SPI.setClockDivider(SPI_CLOCK_DIV32);
+  
+  // have to send on master in, *slave out*
+  pinMode(MISO, OUTPUT);
+  
+  // turn on SPI in slave mode
+  SPCR |= _BV(SPE);
+  
+  // turn on interrupts
+  SPCR |= _BV(SPIE);
+  
+  //I2C Setup
+  rtc.begin();
+
+  pinMode(LED, OUTPUT);
+  
+  setWakeupTime(5);
+}
+
+
+void loop() {
+  
+  if(awake){
+    Receive any incoming packets and send a response
+   handleSPI();
+  }
+     
+  if(checkWakeup()){
+     Serial.println(ledState);
+     ledState = ledState ^ 1;
+     digitalWrite(LED,ledState);
+     setWakeupTime(5);
   }
 }
