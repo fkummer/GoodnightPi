@@ -121,7 +121,7 @@ void configRequest(unsigned char * configResp, long timeInterval, unsigned char 
 	clearBuffer(configReq, 11);
 	clearBuffer(configResp, 11);
 	
-	//Assign opcode
+	//Assign opcode  fd = wiringPiSPISetup(CHANNEL, 500000);
 	configReq[0] = 0x04;
 	
 	//4 bytes for time interval

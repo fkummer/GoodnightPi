@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <errno.h>
+#include <stdlib.h>
 
 #include "raspi_spi.h"
 
@@ -70,15 +71,19 @@ int main(){
 			//If a timer set us off
 			if(timeInterval != 0){
 				printf("Timer\n");
-				printf("%ld", timeInterval);
+				printf("%ld\n", timeInterval);
+				repeat = 0;
+				system("sudo python /home/pi/final/GoodnightPi/Timer.py");
 			}else{
 				//If interrupt 0 set us off
 				if(int0){
 					printf("Int0\n");
+					repeat = 0;
 				}else{
 					//If interrupt 1 set us off
 					if(int1){
 						printf("Int1\n");
+						repeat = 0;
 					}else{
 						printf("Mystery...\n");
 					}
@@ -90,5 +95,15 @@ int main(){
 		}
 	  }
   }
-	
+  
+  printf("Finito\n");
+  unsigned char sleepResp[11];
+  sleepRequest(sleepResp);
+  while(sleepResp[0] != 0x03){
+	  sleepRequest(sleepResp);
+  }
+  //We're good to shutdown!
+  
+  printf("Grande Finito!\n");
+  //system("sudo shutdown -h now");
 }
