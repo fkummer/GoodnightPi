@@ -20,11 +20,18 @@ unsigned char resp_buff[11];
 volatile unsigned char recv_packet[11];
 volatile byte resp_ind = 0;
 
-//Is Pi awake
-boolean awake = 1;
+//Is Pi alive
+boolean alive = 1;
+
+//Do we want to turn off the power when we get the chance?
+boolean gotoSleep = 0;
+
+//timeInterval for our next wakeup.
+long timeInterval = 0;
 
 #define LED   7
 #define PACKET_LEN 11
+#define ALIVE 5
 
 // SPI interrupt routine
 //Capture what is coming in. 
@@ -91,16 +98,16 @@ void fillPayload(byte opCode, unsigned char * buff){
   switch (opCode){
     case 0x01: //WAKE_RESP
       //4 bytes for the time interval that woke it
-      buff[1] = 0;
-      buff[2] = 0;
-      buff[3] = 0;
-      buff[4] = 0;
+      buff[1] = timeInterval & 0x000000FF;
+      buff[2] = timeInterval & 0x0000FF00;
+      buff[3] = timeInterval & 0x00FF0000;
+      buff[4] = timeInterval & 0xFF000000;
       
       //1 byte for if interrupt 0 woke it or not
       buff[5] = 0;
       
       //1 byte for if interrupt 1 woke it or not
-      buff[6] = 1;
+      buff[6] = 0;
       
       //4 empty bytes
       buff[7] = 0;
@@ -129,6 +136,47 @@ void fillPayload(byte opCode, unsigned char * buff){
  
 } 
 
+//Set things as needed.
+void processPacket(volatile unsigned char * buff){
+  unsigned char opCode = buff[0];
+  
+  switch(opCode){
+    case 0x00://WAKE_REQ
+      //We dont need to do anything!
+      break;
+      
+    case 0x02://SLEEP_REQ
+      //Time to sleep
+      Serial.println("Im Sleepy");
+      gotoSleep = 1;
+      break;
+      
+    case 0x04:
+      int i;
+      //Assemble the time interval!
+      //Fetchez la vache!
+      timeInterval = 0x00000000;
+      for(i = 4; i > 0; i--){
+        timeInterval = timeInterval | buff[i];
+        if(i > 1){
+          timeInterval = timeInterval << 8;
+        }
+      }
+      Serial.println("Configured");
+      Serial.println(timeInterval);
+      //TODO: Add interrupt stuff
+      
+      break;
+      
+    case 0x06:
+      //We dont need to do anything!
+      break;
+      
+    default:
+      break;
+  }
+  
+}
 //Specifically for populating empty payloads, since its so common.
 void fillEmpty(unsigned char * buff){
   byte buff_ind;
@@ -140,22 +188,26 @@ void fillEmpty(unsigned char * buff){
 //Pass in the number of seconds until next wake up, calculate 
 //the appropriate unix time for to wake up. Set the timer flag
 void setWakeupTime(long seconds){
+  Serial.println("Set");
   wakeTime = rtc.now().unixtime() + seconds;
   timeSet = 1;
 }
 
-boolean checkWakeup(){
-  if(timeSet){
-    Serial.println("in");
+char checkWakeup(){
+  //Serial.println(timeSet, DEC);
+  if(timeSet != 0){
+    //Serial.println("in");
     if(rtc.now().unixtime() >= wakeTime){
       //Time to get up!
-     return true;
      timeSet = 0;
-    }else{
-     return false;
+     Serial.println("hm");
+     return 1;
+     
+     
     }
   }
-  return false;
+  //Serial.println("abafadfadsfa");
+  return 0;
 }
 
 void handleSPI(){
@@ -181,6 +233,7 @@ void handleSPI(){
     cnt = 0;
 
     if(outgoing){
+      processPacket(recv_packet);
       resp_buff[0] = getOpCode(recv_packet[0]);
       fillPayload(resp_buff[0], resp_buff); 
       SPDR = resp_buff[0];
@@ -190,9 +243,15 @@ void handleSPI(){
   }
 }
 
+void turnOffPower(){
+  Serial.println("going down");
+  gotoSleep = 0;
+  return;
+}
 
 void setup() {
   Serial.begin(115200);
+  
   
   //SPI setup
   SPI.setClockDivider(SPI_CLOCK_DIV32);
@@ -210,22 +269,38 @@ void setup() {
   rtc.begin();
 
   pinMode(LED, OUTPUT);
+  pinMode(ALIVE, INPUT);
   
-  setWakeupTime(5);
+  delay(5);
 }
 
 
 void loop() {
+  alive = digitalRead(ALIVE);
   
-  if(awake){
-    Receive any incoming packets and send a response
+  if(gotoSleep){
+    if(!alive){
+      Serial.println("Beep");
+      delay(5000); //Wait to make sure Pi is shutdown
+      turnOffPower();
+      if(timeInterval != 0){
+        Serial.println("Alarming!");
+        setWakeupTime(timeInterval);
+      }
+    }
+  }
+  
+  if(alive){
+   //Receive any incoming packets and send a response
+   //Serial.println("Live");
    handleSPI();
   }
-     
-  if(checkWakeup()){
-     Serial.println(ledState);
+  
+  if(checkWakeup() == 1){
+     Serial.println("BRING!");
      ledState = ledState ^ 1;
      digitalWrite(LED,ledState);
-     setWakeupTime(5);
+  }else{
+  
   }
 }
