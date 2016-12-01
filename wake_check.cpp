@@ -79,11 +79,13 @@ int main(){
 				if(int0){
 					printf("Int0\n");
 					repeat = 0;
+					system("sudo python /home/pi/final/GoodnightPi/INT0.py");
 				}else{
 					//If interrupt 1 set us off
 					if(int1){
 						printf("Int1\n");
 						repeat = 0;
+						system("sudo python /home/pi/final/GoodnightPi/INT1.py");
 					}else{
 						printf("Mystery...\n");
 					}
