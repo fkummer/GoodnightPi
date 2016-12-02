@@ -4,6 +4,12 @@ import RPi.GPIO as GPIO
 
 pygame.init()
 
+userInput = 0
+incLoc = 10
+j=0
+string = {}
+invalid = 0
+
 
 size = width, height = 320,240
 
@@ -46,7 +52,7 @@ numbers = {48 : 0,
 
 	
 def convertAsciiToNumeral(ascii):
-	if(ascii < 48 or ascii > 57):
+	if((ascii < 48 or ascii > 57) and ascii != 13):
 		text = "INVALID INPUT"
 	elif(ascii == 13):
 		text = ascii
@@ -63,16 +69,16 @@ def eraseLine(length):
 		screen.blit(text_surface_erase, rect_erase)
 		loc = (10+i,170)
 	
-userInput = 0
-incLoc = 10
-j=0
-string = {}
+
 while True:
 	screen.fill(BLACK)
 	screen.blit(text_surface_box, rect_box)
 	screen.blit(text_surface_quit, rect_quit)
 	if(userInput == 1):
-		printTimeInterval(string[j], loc, color)
+		printTimeInterval(number, loc, color)
+	elif(invalid == 1):
+		printInvalid()
+		
 	
 	for event in pygame.event.get():
 		if(event.type is pygame.MOUSEBUTTONDOWN):
@@ -84,25 +90,31 @@ while True:
 				
 		if(event.type is pygame.KEYDOWN):
 			userInput = 1
-			print event.key
 			number = convertAsciiToNumeral(event.key)
 				
 			if(number == "INVALID INPUT"):	
 				loc = (80, 170)
 				color = RED
-				string[j] = number
+				userInput = 0
+				invalid = 1
 			else:
+				invalid = 0
 				if(number == 13):
-					eraseLine()
+					#eraseLine(j)
 					j=0
 					userInput = 0
+					
+					timeInterval = p*1000
+					print string
+					print (timeInterval)
 				else:
 					incLoc = incLoc + 1
 					loc = (incLoc, 170)
 					color = WHITE
 					
-				string[j] = str(number)
-				j = j+1
+					number = str(number)
+					string[j] = number
+					j = j+1
 			
 		
 

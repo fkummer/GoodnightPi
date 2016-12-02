@@ -1,5 +1,4 @@
 
-#include <Python.h>
 #include <iostream>
 #include <errno.h>
 #include <wiringPi.h>
@@ -114,14 +113,14 @@ void sleepRequest(unsigned char * sleepResp){
 }
 
 //Sends a CONFIG_REQ and returns a pointer to the response.
-void configRequest(unsigned char * configResp, long timeInterval, unsigned char int0enable, unsigned char int0type, unsigned char int1enable, unsigned char int1type){
+configRequest(unsigned char * configResp, long timeInterval, unsigned char int0enable, unsigned char int0type, unsigned char int1enable, unsigned char int1type){
 	unsigned char configReq[11];
 	
 	//Make sure no junk is hanging around in the arrays.
 	clearBuffer(configReq, 11);
 	clearBuffer(configResp, 11);
 	
-	//Assign opcode
+	//Assign opcode  fd = wiringPiSPISetup(CHANNEL, 500000);
 	configReq[0] = 0x04;
 	
 	//4 bytes for time interval
@@ -169,104 +168,31 @@ void pingRequest(unsigned char * pingResp){
 	sendRequest(pingReq, pingResp);
 }
 
-//int main()
-//{
-   //int fd, result;
+int main()
+{ 
+   printf("Initializing\n");
+
+   // Configure the interface.
+   // CHANNEL insicates chip select,
+   // 500000 indicates bus speed.
+   wiringPiSPISetup(CHANNEL, 500000);
    
-   //printf("Initializing\n");
-
-   //// Configure the interface.
-   //// CHANNEL insicates chip select,
-   //// 500000 indicates bus speed.
-   //fd = wiringPiSPISetup(CHANNEL, 500000);
-   
-   //while(1){
-		//sleep(2);
-		//unsigned char result[11];
-		
-		//printf("Wake\n");
-		//wakeRequest(result);
-		//if(result[0] == 0x01){
-			//int i;
-			//for(i = 1; i < 11; i++){
-				//printf("%c",result[i]);
-			//}
-			//printf("\n");
-		//}else{
-			//printf("Wake Fail\n");
-		//}
-		//sleep(2);
-		
-		//printf("Sleep\n");
-		//sleepRequest(result);
-		//if(result[0] == 0x03){
-			//int i;
-			//for(i = 1; i < 11; i++){
-				//printf("%c",result[i]);
-			//}
-			//printf("\n");
-		//}else{
-			//printf("Sleep Fail\n");
-		//}
-		//sleep(2);
-		
-		//printf("Config\n");
-		//configRequest(result,1000, 0, 0, 0, 0);
-		//if(result[0] == 0x05){
-			//int i;
-			//for(i = 1; i < 11; i++){
-				//printf("%c",result[i]);
-			//}
-			//printf("\n");
-		//}else{
-			//printf("Config Fail\n");
-		//}
-		//sleep(2);
-		
-		//printf("Ping\n");
-		//pingRequest(result);
-		//if(result[0] == 0x07){
-			//int i;
-			//for(i = 1; i < 11; i++){
-				//printf("%c",result[i]);
-			//}
-			//printf("\n");
-		//}else{
-			//printf("Ping Fail\n");
-		//}
-		//sleep(2);
-   //}
-
-//}
-
-void test()
-{
-	printf("hello");
-}
-
-static PyObject * configRequest_wrapper(PyObject * self, PyObject * args)
-{
-	//unsigned char * configResp; long timeInterval; unsigned char int0enable; unsigned char int0type; unsigned char int1enable; unsigned char int1type;
+	sleep(2);
+	unsigned char result[11];
 	
-	//if(!PyArg_ParseTuple(args, "s", &configResp, timeInterval, int0enable, int0type, int1enable, int1type))
-	//{
-		//return NULL;
-	//}
-	
-	//configRequest(configResp, timeInterval, int0enable, int0type, int1enable, int1type);
-	test();
+	printf("Config\n");
+	configRequest(result, 5, 0, 0, 0, 0);
+	if(result[0] == 0x05){
+		int i;
+		for(i = 1; i < 11; i++){
+			printf("%c",result[i]);
+		}
+		printf("\n");
+	}else{
+		printf("Config Fail\n");
+	}
+	sleep(2);
+
 }
 
-static PyMethodDef methods[] = {
-	{"hello", configRequest_wrapper, METH_VARARGS, "say hello"},
-	{NULL, NULL, 0, NULL}
-};
 
-DL_EXPORT(void) init()
-{
-	Py_InitModule("hello", methods);
-}
-
-int main(void)
-{
-}
