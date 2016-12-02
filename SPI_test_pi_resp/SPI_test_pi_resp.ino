@@ -1,5 +1,4 @@
-// Written by Nick Gammon
-// April 2011
+
 #include <SPI.h>
 
 volatile unsigned char SPI_buff[100];
@@ -96,21 +95,21 @@ void fillPayload(byte opCode, unsigned char * buff){
   switch (opCode){
     case 0x01: //WAKE_RESP
       //4 bytes for the time interval that woke it
-      buff[1] = 'w';
-      buff[2] = 'a';
-      buff[3] = 'k';
-      buff[4] = 'e';
+      buff[1] = 0;
+      buff[2] = 0;
+      buff[3] = 0;
+      buff[4] = 0;
       
       //1 byte for if interrupt 0 woke it or not
-      buff[5] = 'm';
+      buff[5] = 0;
       
       //1 byte for if interrupt 1 woke it or not
-      buff[6] = 'e';
+      buff[6] = 1;
       
       //4 empty bytes
-      buff[7] = 'u';
-      buff[8] = 'p';
-      buff[9] = '!';
+      buff[7] = 0;
+      buff[8] = 0;
+      buff[9] = 0;
       buff[10] = 0x00;
       
       break;
