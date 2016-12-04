@@ -36,8 +36,9 @@ int main(){
   unsigned char int1;
   
   while(repeat){
-	  sleep(2);
-	  printf("hi\n");
+	  sleep(5);
+	  sleepState = digitalRead(SLEEP_GPIO);
+	  //printf("hi\n");
 
 	  if(sleepState){
 		unsigned char resp[11];
@@ -107,5 +108,5 @@ int main(){
   //We're good to shutdown!
   
   printf("Grande Finito!\n");
-  //system("sudo shutdown -h now");
+  system("sudo shutdown -h now");
 }

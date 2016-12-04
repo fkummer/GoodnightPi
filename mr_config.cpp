@@ -6,7 +6,6 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "raspi_spi.h"
-#include <string.h>
 
 #define START_BYTE 0xFE
 
@@ -114,25 +113,21 @@ void sleepRequest(unsigned char * sleepResp){
 }
 
 //Sends a CONFIG_REQ and returns a pointer to the response.
-void configRequest(unsigned char * configResp, long timeInterval, unsigned char int0enable, unsigned char int0type, unsigned char int1enable, unsigned char int1type){
+configRequest(unsigned char * configResp, long timeInterval, unsigned char int0enable, unsigned char int0type, unsigned char int1enable, unsigned char int1type){
 	unsigned char configReq[11];
-	
-	cout<<"hi"<<endl;
 	
 	//Make sure no junk is hanging around in the arrays.
 	clearBuffer(configReq, 11);
 	clearBuffer(configResp, 11);
 	
-	//Assign opcode
+	//Assign opcode  fd = wiringPiSPISetup(CHANNEL, 500000);
 	configReq[0] = 0x04;
 	
 	//4 bytes for time interval
-	//configReq[1] = (unsigned char)(timeInterval & 0x000000FF);
-	//configReq[2] = (unsigned char)(timeInterval & 0x0000FF00) ;
-	//configReq[3] = (unsigned char)(timeInterval & 0x00FF0000);
-	//configReq[4] = (unsigned char)(timeInterval & 0xFF000000);
-	
-	memcpy(&configReq[1],&timeInterval, 4);
+	configReq[1] = (unsigned char)(timeInterval & 0x000000FF);
+	configReq[2] = (unsigned char)(timeInterval & 0x0000FF00);
+	configReq[3] = (unsigned char)(timeInterval & 0x00FF0000);
+	configReq[4] = (unsigned char)(timeInterval & 0xFF000000);
 	
 	//1 byte to set interrupt 0
 	configReq[5] = int0enable;
@@ -173,72 +168,31 @@ void pingRequest(unsigned char * pingResp){
 	sendRequest(pingReq, pingResp);
 }
 
-//int main()
-//{
-   //int fd, result;
-   
-   //printf("Initializing\n");
+int main()
+{ 
+   printf("Initializing\n");
 
-   //// Configure the interface.
-   //// CHANNEL insicates chip select,
-   //// 500000 indicates bus speed.
-   //fd = wiringPiSPISetup(CHANNEL, 500000);
+   // Configure the interface.
+   // CHANNEL insicates chip select,
+   // 500000 indicates bus speed.
+   wiringPiSPISetup(CHANNEL, 500000);
    
-   //while(1){
-		//sleep(2);
-		//unsigned char result[11];
-		
-		//printf("Wake\n");
-		//wakeRequest(result);
-		//if(result[0] == 0x01){
-			//int i;
-			//for(i = 1; i < 11; i++){
-				//printf("%c",result[i]);
-			//}
-			//printf("\n");
-		//}else{
-			//printf("Wake Fail\n");
-		//}
-		//sleep(2);
-		
-		//printf("Sleep\n");
-		//sleepRequest(result);
-		//if(result[0] == 0x03){
-			//int i;
-			//for(i = 1; i < 11; i++){
-				//printf("%c",result[i]);
-			//}
-			//printf("\n");
-		//}else{
-			//printf("Sleep Fail\n");
-		//}
-		//sleep(2);
-		
-		//printf("Config\n");
-		//configRequest(result,1000, 0, 0, 0, 0);
-		//if(result[0] == 0x05){
-			//int i;
-			//for(i = 1; i < 11; i++){
-				//printf("%c",result[i]);
-			//}
-			//printf("\n");
-		//}else{
-			//printf("Config Fail\n");
-		//}
-		//sleep(2);
-		
-		//printf("Ping\n");
-		//pingRequest(result);
-		//if(result[0] == 0x07){
-			//int i;
-			//for(i = 1; i < 11; i++){
-				//printf("%c",result[i]);
-			//}
-			//printf("\n");
-		//}else{
-			//printf("Ping Fail\n");
-		//}
-		//sleep(2);
-   //}
+	sleep(2);
+	unsigned char result[11];
+	
+	printf("Config\n");
+	configRequest(result, 5, 0, 0, 0, 0);
+	if(result[0] == 0x05){
+		int i;
+		for(i = 1; i < 11; i++){
+			printf("%c",result[i]);
+		}
+		printf("\n");
+	}else{
+		printf("Config Fail\n");
+	}
+	sleep(2);
 
-//}
+}
+
+
