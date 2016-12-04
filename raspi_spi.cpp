@@ -1,5 +1,4 @@
 
-#include <Python.h>
 #include <iostream>
 #include <errno.h>
 #include <wiringPi.h>
@@ -7,6 +6,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include "raspi_spi.h"
+#include <string.h>
 
 #define START_BYTE 0xFE
 
@@ -117,6 +117,8 @@ void sleepRequest(unsigned char * sleepResp){
 void configRequest(unsigned char * configResp, long timeInterval, unsigned char int0enable, unsigned char int0type, unsigned char int1enable, unsigned char int1type){
 	unsigned char configReq[11];
 	
+	cout<<"hi"<<endl;
+	
 	//Make sure no junk is hanging around in the arrays.
 	clearBuffer(configReq, 11);
 	clearBuffer(configResp, 11);
@@ -125,10 +127,12 @@ void configRequest(unsigned char * configResp, long timeInterval, unsigned char 
 	configReq[0] = 0x04;
 	
 	//4 bytes for time interval
-	configReq[1] = (unsigned char)(timeInterval & 0x000000FF);
-	configReq[2] = (unsigned char)(timeInterval & 0x0000FF00);
-	configReq[3] = (unsigned char)(timeInterval & 0x00FF0000);
-	configReq[4] = (unsigned char)(timeInterval & 0xFF000000);
+	//configReq[1] = (unsigned char)(timeInterval & 0x000000FF);
+	//configReq[2] = (unsigned char)(timeInterval & 0x0000FF00) ;
+	//configReq[3] = (unsigned char)(timeInterval & 0x00FF0000);
+	//configReq[4] = (unsigned char)(timeInterval & 0xFF000000);
+	
+	memcpy(&configReq[1],&timeInterval, 4);
 	
 	//1 byte to set interrupt 0
 	configReq[5] = int0enable;
@@ -238,35 +242,3 @@ void pingRequest(unsigned char * pingResp){
    //}
 
 //}
-
-void test()
-{
-	printf("hello");
-}
-
-static PyObject * configRequest_wrapper(PyObject * self, PyObject * args)
-{
-	//unsigned char * configResp; long timeInterval; unsigned char int0enable; unsigned char int0type; unsigned char int1enable; unsigned char int1type;
-	
-	//if(!PyArg_ParseTuple(args, "s", &configResp, timeInterval, int0enable, int0type, int1enable, int1type))
-	//{
-		//return NULL;
-	//}
-	
-	//configRequest(configResp, timeInterval, int0enable, int0type, int1enable, int1type);
-	test();
-}
-
-static PyMethodDef methods[] = {
-	{"hello", configRequest_wrapper, METH_VARARGS, "say hello"},
-	{NULL, NULL, 0, NULL}
-};
-
-DL_EXPORT(void) init()
-{
-	Py_InitModule("hello", methods);
-}
-
-int main(void)
-{
-}

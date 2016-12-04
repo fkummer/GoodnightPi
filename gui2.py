@@ -1,6 +1,6 @@
 import pygame
 import RPi.GPIO as GPIO
-import raspi_spi 
+import os
 
 
 pygame.init()
@@ -60,21 +60,22 @@ def printTimeInterval(key):
 times = ["1min","2min","5min","10min","15min","30min","1hr","2hr","5hr","10hr","15hr","20hr","24hr"]
 number = 0
 up = 0
-minutes = {"1min"  : 1,
-		   "2min"  : 2,
-		   "5min"  : 5,
-		   "10min" : 10,
-		   "15min" : 15,
-		   "30min" : 30,
-		   "1hr"   : 60,
-		   "2hr"   : 120,
-		   "5hr"   : 300,
-		   "10hr"  : 600,
-		   "15hr"  : 900,
-		   "20hr"  : 1200,
-		   "24hr"  : 1440,
+minutes = {"1min"  : 60,
+		   "2min"  : 120,
+		   "5min"  : 300,
+		   "10min" : 600,
+		   "15min" : 900,
+		   "30min" : 1800,
+		   "1hr"   : 3600,
+		   "2hr"   : 7200,
+		   "5hr"   : 18000,
+		   "10hr"  : 36000,
+		   "15hr"  : 54000,
+		   "20hr"  : 72000,
+		   "24hr"  : 86400,
 		   }
 ping = 0
+
 		   
 while True:
 	screen.fill(BLACK)
@@ -92,21 +93,20 @@ while True:
 		if(event.type is pygame.MOUSEBUTTONDOWN):
 			pos = pygame.mouse.get_pos()
 			x,y = pos
-			print pos
 			
 			if y>200 and 20<x and x<60:
 				exit()
 				
 			if (y>30 and y<50) and (x>24 and x<60):
-				Int = 1
+				os.system('sudo ./guiMain time')
 				
 			
 			if (y>30 and y<50) and (x>224 and x<284):
-				Int = 2
+				os.system('sudo ./guiMain external')
 				
 			if (y>83 and y<97) and (x>27 and x<59):
-				ping = 1
-				
+				os.system('sudo ./guiMain ping')
+								
 				
 		if(event.type is pygame.KEYDOWN):
 			
@@ -121,6 +121,8 @@ while True:
 			elif(event.key == 13):
 				number = minutes[times[up]]
 				print number
+				string = 'sudo ./guiMain' + " " + "interval" + " " + str(number)
+				os.system(string)
 			
 			
 		
