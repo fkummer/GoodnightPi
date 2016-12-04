@@ -106,15 +106,25 @@ int main(int argc, char* argv[])
 	
 	switch(arr[0])
 	{
-		case 0x05: cout<<"success"<<endl;
-					break;
+		case 0x05: 
+		{
+			cout<<"interval success"<<endl;
+			ofstream configFile;
+			configFile.open("config.txt");
+			configFile<<"Interval Success!";
+			configFile.close();
+			break;
+		}
 		
-		case 0x07: cout<<"ping success"<<endl;
-				    ofstream myfile;
-					myfile.open("ping.txt");
-					myfile<<"Ping Success!";
-					myfile.close();
-					break;
+		case 0x07: 
+		{
+			cout<<"ping success"<<endl;
+		    ofstream myfile;
+			myfile.open("ping.txt");
+			myfile<<"Ping Success!";
+			myfile.close();
+			break;
+		}
 	
 	}
 	
