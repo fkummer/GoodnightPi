@@ -32,6 +32,7 @@ long timeInterval = 0;
 #define LED   7
 #define PACKET_LEN 11
 #define ALIVE 5
+#define PWR_CNTRL 4
 
 // SPI interrupt routine
 //Capture what is coming in. 
@@ -246,6 +247,7 @@ void handleSPI(){
 void turnOffPower(){
   Serial.println("going down");
   gotoSleep = 0;
+  digitalWrite(PWR_CNTRL, LOW);
   return;
 }
 
@@ -269,6 +271,7 @@ void setup() {
   rtc.begin();
 
   pinMode(LED, OUTPUT);
+  pinMode(PWR_CNTRL, OUTPUT);
   pinMode(ALIVE, INPUT);
   
   delay(5);
@@ -296,10 +299,12 @@ void loop() {
    handleSPI();
   }
   
+  //Time to wakeup!
   if(checkWakeup() == 1){
      Serial.println("BRING!");
      ledState = ledState ^ 1;
      digitalWrite(LED,ledState);
+     digitalWrite(PWR_CNTRL, HIGH);
   }else{
   
   }
