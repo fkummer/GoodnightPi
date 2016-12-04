@@ -1,2 +1,3 @@
 cd /home/pi/final/GoodnightPi
 sudo ./on_led
+sudo ./wake_check

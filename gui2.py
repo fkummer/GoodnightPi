@@ -1,6 +1,7 @@
 import pygame
 import RPi.GPIO as GPIO
 import os
+import time
 
 
 pygame.init()
@@ -38,17 +39,25 @@ text_surface_event = font_small.render("********Event********",True, WHITE)
 rect_event = text_surface_event.get_rect(center=(150,20))
 screen.blit(text_surface_event, rect_event)
 
-text_surface_time = font_small.render("Time",True, BLUE)
-rect_time = text_surface_time.get_rect(center=(40,40))
+text_surface_time = font_small.render("Interrupt 0 ",True, BLUE)
+rect_time = text_surface_time.get_rect(center=(80,40))
 screen.blit(text_surface_time, rect_time)
 
-text_surface_external = font_small.render("External",True, BLUE)
+text_surface_external = font_small.render("Interrupt 1",True, BLUE)
 rect_external = text_surface_external.get_rect(center=(250,40))
 screen.blit(text_surface_external, rect_external)
 
 text_surface_ping = font_small.render("Ping",True, BLUE)
-rect_ping = text_surface_ping.get_rect(center=(40,90))
-screen.blit(text_surface_ping, rect_external)
+rect_ping = text_surface_ping.get_rect(center=(30,90))
+screen.blit(text_surface_ping, rect_ping)
+
+text_surface_pingresp = font_small.render("PING SUCCESS!!!",True, RED)
+rect_pingresp = text_surface_pingresp.get_rect(center=(150,90))
+screen.blit(text_surface_pingresp, rect_pingresp)
+
+text_surface_erase = font_small.render("               ",True, RED)
+rect_erase = text_surface_erase.get_rect(center=(150,90))
+screen.blit(text_surface_erase, rect_erase)
 
 
 def printTimeInterval(key):
@@ -75,7 +84,7 @@ minutes = {"1min"  : 60,
 		   "24hr"  : 86400,
 		   }
 ping = 0
-
+time1=0
 		   
 while True:
 	screen.fill(BLACK)
@@ -87,6 +96,26 @@ while True:
 	screen.blit(text_surface_time, rect_time)
 	screen.blit(text_surface_ping, rect_ping)
 	printTimeInterval(str(times[up]))
+	
+	
+	if(ping == 1):
+		fo = open("ping.txt", "r+")
+		read = fo.read(13);
+		if(read == "Ping Success!"):
+			print "sucessfully read from file"
+			fo.close()
+			fo = open("ping.txt", "w")
+			fo.write("             ")
+			fo.close()
+			time1 = time.time()
+			
+	if(ping == 1):
+		if(time.time() - time1 > 5):
+			screen.blit(text_surface_erase, rect_erase)
+			ping = 0
+		else:
+			screen.blit(text_surface_pingresp, rect_pingresp)
+		
 		
 	
 	for event in pygame.event.get():
@@ -98,14 +127,15 @@ while True:
 				exit()
 				
 			if (y>30 and y<50) and (x>24 and x<60):
-				os.system('sudo ./guiMain time')
+				os.system('sudo ./guiMain interrupt0')
 				
 			
 			if (y>30 and y<50) and (x>224 and x<284):
-				os.system('sudo ./guiMain external')
+				os.system('sudo ./guiMain interrupt1')
 				
 			if (y>83 and y<97) and (x>27 and x<59):
 				os.system('sudo ./guiMain ping')
+				ping = 1
 								
 				
 		if(event.type is pygame.KEYDOWN):
