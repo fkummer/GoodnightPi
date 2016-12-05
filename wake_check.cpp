@@ -48,7 +48,7 @@ int main(){
 		if(resp[0] == 0x01){
 			int i;
 			for(i = 1; i < 11; i++){
-				printf("%c",resp[i]);
+				printf("%c\n",resp[i]);
 			}
 			printf("\n");
 			
@@ -74,21 +74,23 @@ int main(){
 				printf("Timer\n");
 				printf("%ld\n", timeInterval);
 				repeat = 0;
-				system("sudo python /home/pi/final/GoodnightPi/Timer.py");
+				system("python /home/pi/final/GoodnightPi/Timer.py");
+
 			}else{
 				//If interrupt 0 set us off
-				if(int0){
+				if(int0 != 0){
 					printf("Int0\n");
 					repeat = 0;
-					system("sudo python /home/pi/final/GoodnightPi/INT0.py");
+					system("python /home/pi/final/GoodnightPi/INT0.py");
 				}else{
 					//If interrupt 1 set us off
 					if(int1){
 						printf("Int1\n");
 						repeat = 0;
-						system("sudo python /home/pi/final/GoodnightPi/INT1.py");
+						system("python /home/pi/final/GoodnightPi/INT1.py");
 					}else{
 						printf("Mystery...\n");
+						repeat = 0;
 					}
 				}
 			}

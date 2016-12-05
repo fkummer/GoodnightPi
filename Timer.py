@@ -36,7 +36,7 @@ print "Distance:",distance,"cm"
 
 GPIO.cleanup()
 
-target = open("sensor_data.txt", 'a')
+target = open('sensor_data.txt', 'a')
 
 print "Writing to file"
 
