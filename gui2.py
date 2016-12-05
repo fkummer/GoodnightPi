@@ -153,7 +153,7 @@ while True:
 			if y>200 and 20<x and x<60:
 				exit()
 				
-			if (y>30 and y<50) and (x>24 and x<60):
+			if (y>30 and y<50) and (x>24 and x<120):
 				os.system('sudo ./guiMain interrupt0')
 				
 			
