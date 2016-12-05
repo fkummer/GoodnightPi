@@ -3,6 +3,8 @@
 #include <RTClib.h>
 #include <SPI.h>
 
+#define NOT_AN_INTERRUPT -1
+
 //Variables for I2C
 RTC_DS1307 rtc;
 long wakeTime;
@@ -19,6 +21,7 @@ volatile byte outgoing = 0;
 unsigned char resp_buff[11];
 volatile unsigned char recv_packet[11];
 volatile byte resp_ind = 0;
+volatile byte supress_int = 0;
 
 //Is Pi alive
 boolean alive = 1;
@@ -29,10 +32,30 @@ boolean gotoSleep = 0;
 //timeInterval for our next wakeup.
 long timeInterval = 0;
 
+//Is int0 enabled
+byte int0 = 0;
+
+//Is int1 enable
+byte int1 = 0;
+
+//timer wants us to get up
+byte timer_woke = 0;
+
+//interrupt 0 wants us to get up
+volatile byte int0_woke = 0;
+
+//interrupt 1 wants us to get up
+volatile byte int1_woke = 0;
+
+//Are we waiting to get up
+byte wait_for_wake = 0;
+
 #define LED   7
 #define PACKET_LEN 11
 #define ALIVE 5
 #define PWR_CNTRL 4
+#define INT0 2
+#define INT1 3
 
 // SPI interrupt routine
 //Capture what is coming in. 
@@ -99,16 +122,34 @@ void fillPayload(byte opCode, unsigned char * buff){
   switch (opCode){
     case 0x01: //WAKE_RESP
       //4 bytes for the time interval that woke it
-      buff[1] = timeInterval & 0x000000FF;
-      buff[2] = timeInterval & 0x0000FF00;
-      buff[3] = timeInterval & 0x00FF0000;
-      buff[4] = timeInterval & 0xFF000000;
+      if(timer_woke == 1){
+        Serial.println("Timer woke");
+        buff[1] = timeInterval & 0x000000FF;
+        buff[2] = timeInterval & 0x0000FF00;
+        buff[3] = timeInterval & 0x00FF0000;
+        buff[4] = timeInterval & 0xFF000000;
+      }else{
+        buff[1] = 0;
+        buff[2] = 0;
+        buff[3] = 0;
+        buff[4] = 0;
+      }
       
       //1 byte for if interrupt 0 woke it or not
-      buff[5] = 0;
+      if(int0_woke == 1){
+        Serial.println("Interrupt 0 woke");
+        buff[5] = 1;
+      }else{
+        buff[5] = 0;
+      }
       
       //1 byte for if interrupt 1 woke it or not
-      buff[6] = 0;
+      if(int1_woke == 1){
+        Serial.println("Interrupt 1 woke");
+        buff[6] = 1;
+      }else{
+        buff[6] = 0;
+      }
       
       //4 empty bytes
       buff[7] = 0;
@@ -116,6 +157,10 @@ void fillPayload(byte opCode, unsigned char * buff){
       buff[9] = 0;
       buff[10] = 0x00;
       
+      //Clear what woke us
+      timer_woke = 0;
+      int0_woke = 0;
+      int1_woke = 0;
       break;
       
     case 0x03: //SLEEP_RESP
@@ -149,23 +194,48 @@ void processPacket(volatile unsigned char * buff){
     case 0x02://SLEEP_REQ
       //Time to sleep
       Serial.println("Im Sleepy");
-      gotoSleep = 1;
+      
+      //Only sleep if we're configured to do something!
+      if(timeInterval != 0x00000000 || int0 == 1 || int1 == 1){  
+        Serial.println("I think I'll sleep");
+        gotoSleep = 1;
+      }
       break;
       
     case 0x04:
       int i;
       //Assemble the time interval!
       //Fetchez la vache!
-      timeInterval = 0x00000000;
+      long tempInterval;
+      tempInterval = 0x00000000;
       for(i = 4; i > 0; i--){
-        timeInterval = timeInterval | buff[i];
+        tempInterval = tempInterval | buff[i];
         if(i > 1){
-          timeInterval = timeInterval << 8;
+          tempInterval = tempInterval << 8;
         }
       }
+      
+      //This packet is not attempting to configure the timer
+      if(tempInterval == 0x00000000){
+        //Don't change the timeInterval
+      }else{
+        timeInterval = tempInterval;
+      }
+      
       Serial.println("Configured");
       Serial.println(timeInterval);
-      //TODO: Add interrupt stuff
+      
+      //into enable/disable
+      if(buff[5] == 1){
+        Serial.println("toggle int0");
+        int0 ^= 1;
+      }
+      
+      //int1 enable/disable
+      if(buff[7] == 1){
+        Serial.println("toggle int1");
+        int1 ^= 1;
+      }
       
       break;
       
@@ -178,6 +248,12 @@ void processPacket(volatile unsigned char * buff){
   }
   
 }
+
+void processInterrupts(){
+
+  
+}
+
 //Specifically for populating empty payloads, since its so common.
 void fillEmpty(unsigned char * buff){
   byte buff_ind;
@@ -197,17 +273,17 @@ void setWakeupTime(long seconds){
 char checkWakeup(){
   //Serial.println(timeSet, DEC);
   if(timeSet != 0){
-    //Serial.println("in");
+    //Serial.println(rtc.now().unixtime());
+    //delay(1000);
     if(rtc.now().unixtime() >= wakeTime){
       //Time to get up!
      timeSet = 0;
+     timer_woke = 1;
      Serial.println("hm");
-     return 1;
-     
-     
+     return 1;  
     }
   }
-  //Serial.println("abafadfadsfa");
+
   return 0;
 }
 
@@ -251,6 +327,26 @@ void turnOffPower(){
   return;
 }
 
+void int0_handler(){
+  //If interrupts are allowed to wake us
+  Serial.println("whoa cool");
+  if(int0 == 1){
+    int0_woke = 1;
+    timeSet = 0;
+  }else{
+    int0_woke = 0;
+  }
+}
+
+void int1_handler(){
+  if(int1 == 1){
+    int1_woke = 1;
+    timeSet = 0;
+  }else{
+    int1_woke = 0;
+  }
+}
+
 void setup() {
   Serial.begin(115200);
   
@@ -273,6 +369,11 @@ void setup() {
   pinMode(LED, OUTPUT);
   pinMode(PWR_CNTRL, OUTPUT);
   pinMode(ALIVE, INPUT);
+  pinMode(INT0, INPUT);
+  pinMode(INT1, INPUT);
+  
+  attachInterrupt(digitalPinToInterrupt(INT0), int0_handler, RISING);
+  attachInterrupt(digitalPinToInterrupt(INT1), int1_handler, RISING);
   
   delay(5);
 }
@@ -285,7 +386,10 @@ void loop() {
     if(!alive){
       Serial.println("Beep");
       delay(5000); //Wait to make sure Pi is shutdown
+      //attachInterrupt(digitalPinToInterrupt(INT0), int0_handler, RISING);
+      //attachInterrupt(digitalPinToInterrupt(INT1), int1_handler, RISING);
       turnOffPower();
+      wait_for_wake = 1;
       if(timeInterval != 0){
         Serial.println("Alarming!");
         setWakeupTime(timeInterval);
@@ -300,9 +404,12 @@ void loop() {
   }
   
   //Time to wakeup!
-  if(checkWakeup() == 1){
+  if((checkWakeup() == 1 || int0_woke || int1_woke) && (wait_for_wake == 1) ){
      Serial.println("BRING!");
      ledState = ledState ^ 1;
+     wait_for_wake = 0;
+     //detachInterrupt(digitalPinToInterrupt(INT0));
+     //detachInterrupt(digitalPinToInterrupt(INT1));
      digitalWrite(LED,ledState);
      digitalWrite(PWR_CNTRL, HIGH);
   }else{
