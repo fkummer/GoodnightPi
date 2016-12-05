@@ -331,17 +331,35 @@ void int0_handler(){
   //If interrupts are allowed to wake us
   Serial.println("whoa cool");
   if(int0 == 1){
-    int0_woke = 1;
-    timeSet = 0;
+    int int0_cnt = 0;
+    while(digitalRead(INT0) && (int0_cnt < 500)){
+      int0_cnt = int0_cnt + 1;
+    }
+    
+    if(int0_cnt >= 500){
+      Serial.println("awesome");
+      int0_woke = 1;
+      timeSet = 0;
+    }
   }else{
     int0_woke = 0;
   }
 }
 
 void int1_handler(){
+  //If interrupts are allowed to wake us
+  Serial.println("super neat");
   if(int1 == 1){
-    int1_woke = 1;
-    timeSet = 0;
+    int int1_cnt = 0;
+    while(digitalRead(INT1) && (int1_cnt < 500)){
+      int1_cnt = int1_cnt + 1;
+    }
+    
+    if(int1_cnt >= 500){
+      Serial.println("radical");
+      int1_woke = 1;
+      timeSet = 0;
+    }
   }else{
     int1_woke = 0;
   }
