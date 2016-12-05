@@ -55,9 +55,14 @@ text_surface_pingresp = font_small.render("PING SUCCESS!!!",True, RED)
 rect_pingresp = text_surface_pingresp.get_rect(center=(150,90))
 screen.blit(text_surface_pingresp, rect_pingresp)
 
-text_surface_erase = font_small.render("               ",True, RED)
-rect_erase = text_surface_erase.get_rect(center=(150,90))
-screen.blit(text_surface_erase, rect_erase)
+text_surface_configresp = font_small.render("CONFIG SUCCESS!!!",True, RED)
+rect_configresp = text_surface_configresp.get_rect(center=(100,200))
+screen.blit(text_surface_configresp, rect_configresp)
+
+def eraseLine(spaces, loc):
+	text_surface_erase = font_small.render(spaces,True, RED)
+	rect_erase = text_surface_erase.get_rect(center=loc)
+	screen.blit(text_surface_erase, rect_erase)
 
 
 def printTimeInterval(key):
@@ -85,6 +90,8 @@ minutes = {"1min"  : 60,
 		   }
 ping = 0
 time1=0
+interval = 0
+time2 = 0
 		   
 while True:
 	screen.fill(BLACK)
@@ -111,10 +118,30 @@ while True:
 			
 	if(ping == 1):
 		if(time.time() - time1 > 5):
-			screen.blit(text_surface_erase, rect_erase)
+			eraseLine("             ", (150,90))
 			ping = 0
 		else:
 			screen.blit(text_surface_pingresp, rect_pingresp)
+			
+	if(interval == 1):
+		fo = open("config.txt", "r+")
+		read = fo.read(17);
+		if(read == "Interval Success!"):
+			print "sucessfully read from file"
+			fo.close()
+			fo = open("config.txt", "w")
+			fo.write("                 ")
+			fo.close()
+			time2 = time.time()
+			
+	if(interval == 1):
+		if(time.time() - time2 > 5):
+			eraseLine("                 ", (100,200))
+			ping = 0
+		else:
+			screen.blit(text_surface_configresp, rect_configresp)
+			
+			
 		
 		
 	
@@ -153,6 +180,7 @@ while True:
 				print number
 				string = 'sudo ./guiMain' + " " + "interval" + " " + str(number)
 				os.system(string)
+				interval = 1
 			
 			
 		

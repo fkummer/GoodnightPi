@@ -45,5 +45,3 @@ file_string = "%f\n" % distance
 target.write(file_string)
 
 target.close()
-	
-
