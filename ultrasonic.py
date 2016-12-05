@@ -26,7 +26,7 @@ while GPIO.input(ECHO) == 0:
 while GPIO.input(ECHO) == 1:
 	pulse_end = time.time()
 	
-pulse_duration = pulse_start - pulse_end
+pulse_duration = (pulse_start - pulse_end) * -1
 
 distance = pulse_duration * 17150
 
@@ -35,3 +35,13 @@ distance = round(distance, 2)
 print "Distance:",distance,"cm"
 
 GPIO.cleanup()
+
+target = open("sensor_data.txt", 'a')
+
+print "Writing to file"
+
+file_string = "%f\n" % distance
+
+target.write(file_string)
+
+target.close()
