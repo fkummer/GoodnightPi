@@ -44,6 +44,8 @@ void setWakeupTime(long seconds){
 
 boolean checkWakeup(){
   if(timeSet){
+    Serial.println(rtc.now().unixtime());
+    delay(1000);
     if(rtc.now().unixtime() >= wakeTime){
       //Time to get up!
      return true;

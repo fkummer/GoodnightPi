@@ -159,19 +159,42 @@ Thanks to Gautham Ponnu for the template!
 									provided on the Pi itself, this protection circuitry was recreated. This consisted of a 2A quick-blow fuse, a diode to prevent reversed current flow, and a 1 uF decoupling capacitor. Two transistors were used to switch power to the Pi, one NFET
 									and one PFET. The FQP30N06L was used as the NFET and the FQP27P06 was used as the PFET. Two of them were used for level-shifting and inversion, allowing a 3.3V signal to safely control 5V and allowing power to be connected only when the signal was
 									high. A schematic of the power control circuit is shown below.</p>
-									<center><img src="images/pcu.jpg" alt="" width="70%" height="70%" title="Connections between the ATMEGA and the Pi"/></center>
+									<center><img src="images/pcu.jpg" alt="" width="70%" height="70%" title="Power Control Circuit"/></center>
 								<br/>
 
 								<p><h3><strong>RTC</strong></h3></p>
 
 								<p>
+									The RTC used was the DS1307, and more specifically the DS1307 breakout board from Adafruit was used for this project. The hardware setup for this component was extremely simple. The RTC was powered by 5V, but was able to communicate with the ATMEGA
+									successfully using 3.3V logic. It communicated with the ATMEGA using I2C, and so connected to it through the SDA and SCL pins, which are pins 27 and 28 on the ATMEGA respectively. The SQW pin of the DS1307 was unused.
+									A schematic of the RTC setup can be seen below.
+									<center><img src="images/rtc.jpg" alt="" width="70%" height="70%" title="RTC Schematic"/></center>
 							  </p>
 
+								<p><h3><strong>Application and Interrupt Hardware</strong></h3></p>
+								<p>
+									For demonstrating this project, some application specific hardware was used to give the Raspberry Pi something to do when it woke and to provide ways to trigger then interrupts. The Ping Ultrasonic Distance Sensor from Parallax
+									was used with the Rasbperry Pi to simulate measuring river depth, and this simply required two GPIO pins on the Pi. A button was connected to interrupt 0 of the ATMEGA to serve as one of the interrupt sources, demonstrating the use of
+									user input as a means of waking up the Raspberry Pi. A voltage divider that included a phototresistor was connected to interrupt 1 on the ATMEGA to demonstrate the use of environmental sensors to trigger interrupts. This setup would trigger
+									the interrup ton the ATMEGA whenever the light levels on the photoresistor rose above a certain threshold.
+								</p>
 								<br/>
 								<p><h3><strong>Complete Circuit</strong></h3></p>
 
+
+
+								<p>A full schematic for the hardware of the project is shown below. Note that this excludes the application specific hardware, such as the ultrasonic sensor and interrupt sources, as they are highly application specfic and were merely for demonstration purposes.
+								The full circuit assembled for the demo is also shown below.</p>
+								<center><img src="images/full_schem.jpg" alt="" width="100%" height="100%" title="Full Schematic"/></center>
+
+
+								<p><h2><strong>Software</strong></h2></p>
+								<br/>
 							</div>
+
+
 						</div><!--// Your section has ended -->
+
 
 						<div class="yui-gf"> <!--// This is a section -->
 							<div class="yui-u first">
