@@ -186,6 +186,7 @@ Thanks to Gautham Ponnu for the template!
 								<p>A full schematic for the hardware of the project is shown below. Note that this excludes the application specific hardware, such as the ultrasonic sensor and interrupt sources, as they are highly application specfic and were merely for demonstration purposes.
 								The full circuit assembled for the demo is also shown below.</p>
 								<center><img src="images/full_schem.jpg" alt="" width="100%" height="100%" title="Full Schematic"/></center>
+								<center><img src="images/full_circ.jpg" alt="" width="100%" height="100%" title="Assembeled Circuit"/></center>
 
 
 								<p><h2><strong>Software</strong></h2></p>
@@ -223,8 +224,12 @@ Thanks to Gautham Ponnu for the template!
 								<h2>Results</h2> <!--// put your heading here -->
 							</div>
 							<div class="yui-u">
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-								</p> <!--// Put Content here -->
+								<p> Overall, the project was successful. The goal of the project was to create additional hardware and a lightweight software framework for the Pi
+			          that enabled power management,and we believe that the final result closely matches that vision. and We were able to implement all of the major functionality we had planned for. The ATMEGA was able to safely control power to the Pi without any damage or corruption of data. The ATMEGA was also able to accurately measure time and wake up the Pi at the appropriately configured intervals.
+								Interrupt support was initially considered a stretch goal, but was successfully integrated and significantly increased the usefulness of the project. The Raspberry Pi also required no significant hardware modification, making the project more easily deployable for others.
+							  The Pi was able to successfully execute different scripts based on the different wakeup sources, and it was possible to easily modify the actions taken by each script, making it easy to implement a variety of applications. Theoretically, anyone should be able to deploy this on their Raspberry Pi with any applicaiton they wish with little modification, though it has only been attemped on one Raspberry Pi so far. The ATMEGA also did prove to use far less power when running by itself than the Pi did when it was idle, resulting in significant power savings.
+							  One area of the project that did not quite meet expectations was the build quality of the hardware. Their was not enough time to move the project to a custom PCB or even to solder onto a perfboard, so it is still only on a breadboard. Moving to a PCB would be ideal, as it would make the project much more reliable and improve its aesthetic.
+							</p>
 							</div>
 						</div><!--// Your section has ended -->
 
