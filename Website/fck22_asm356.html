@@ -189,6 +189,81 @@ Thanks to Gautham Ponnu for the template!
 
 
 								<p><h2><strong>Software</strong></h2></p>
+								</br>
+								<p><h3><strong>GUI</strong></h3></p>
+								<p>
+									For designing the GUI of the project, there were a few alternative options to Pygame which were considered. QtCreator was considered but its files had to downloaded and it takes 8 hours to compile it. With time constraints, Pygame was eventually chosen to be the tool for designing the GUI. </p> </br>
+
+								<p>
+The 2 main requirements for the GUI were that the user could select a time interval and toggle the external interrupts. The toggling of the interrupts can be done by buttons on the GUI which are simple enough to implement. For the time interval, the initial plan was to have a textbox in which the user could enter minutes starting from a minimum of 1 minute to maximum of 1440 minutes (24 hours). The implementation for the text box turned out to be complex as every character which is typed out has to be displayed on every loop iteration. This means all the characters typed have to be stored and dynamically deleted if the user enters the backspace key. To be user friendly a cursor would also be required and this would further complicate the design. </p> </br>
+
+								<p>
+Keeping the above complexity in mind, a drop down menu was selected for the time interval. Again a proper drop down would be difficult to implement fully in PyGame so a compromise was reached, there wouldn't be a drop down but the intervals could be iterated through by the user using the up/down arrow keys. The disadvantage of using this over the text box was that there could only be a limited options to select from for the user unlike the fully customizable minutes in the text box. </p> </br>
+
+								<p>
+After getting all the desired functionality, the next step was to integrate the C++ code and the GUI. This turned out to be more difficult than was initially thought but an elegant solution was still found in the end. Now when the user presses the enter key for selecting the time interval, the corresponding C++ function has to be called for sending the config packets to the Atmega328P. Now C++ functions cannot be directly called in python scripts. So the options to do that were extending python which is adding support so that a C++ library could be imported or using the ctypes library to import C code (there is workaround for using ctypes with C++). Now for extending python, python wrappers have to be created in the C++ files for exporting them. These wrappers are available from the <python.h> header file. After compiling the wrappers and C++ files a C++ library is created which has an extension of .so and can be imported to python. This library gave errors when the python script was run from the terminal. The ctypes library was also tried but gave errors too. Finally a solution was reached where the executable of C++ was called in the python script via the os.system call. For this a separate C++ wrapper file had to be created called guiMain.cpp which accepted command line arguments. These had to be made so that the wrapper could differentiate between the functionalities like the time interval, ping and the external interrupts. </p> </br>
+
+								<p>
+When the time interval was successfully configured the Atmega sent a packet back which signalled success to the Pi. This packet was processed in the guiMain.cpp file and config success!!! text was written into a .txt file. The gui would poll this file and print Config Success!! on the screen when it read the text. After reading the text, it was deleted and the file closed. The success message on the screen lasted for 5 seconds. The Ping success message was implemented in a similar way described above.									
+								</p> </br>
+								
+								<p><h3><strong>Real Time Clock</strong></h3></p>
+								
+								<p>
+										The Real Time Clock is a critical component for the project. The Atmega328P does not have an internal RTC and hence the need for an external module. The module selected for the project was a DS1307 even though it is slightly expensive at $7.95. The advantage of using it is having a really easy to use breakout board with a crystal, RTC chip, capacitors and the battery holder ready to be soldered on a ready made board. The RTC uses I2C to interface with the Atmega328P.
+								</p> </br>
+
+								<p>
+The microcontroller receives the time interval in the form of seconds from the Raspberry Pi and stores it. When a power cycle is going on,the microcontroller reads the epoch time from the RTC which is also in seconds and compares it with the time configured. This is implemented as a poll in the main loop. When the time is greater than interval, the Pi is woken up.
+								</p> </br>
+								
+								<p><h3><strong>Handshaking Protocol Between the Atmega328P and Raspberry Pi 2</strong></h3></p>
+								<p>
+										The communication between the Raspberry Pi 2 and Atmega328P happens through SPI. The protocol has been designed to have 11 packets being sent from Pi-Arduino and from Arduino-Pi. Now the Atmega328P has only a single SPI buffer and hence there is a unified interrupt for receive and transmit. To discriminate between receive and transmit, a start byte is used by the Raspberry Pi to enable a global variable in the Atmega which keeps track of whether a packet is being received or transmitted. </p> </br>
+								
+								<p>
+										The packet is divided into a opcode byte and the payload bytes. The opcode gives information about what the packet is about. For example an opcode 0x01 corresponds to the wake response from the arduino to the Pi. </p> </br>
+								
+								<p>
+										The different packets are given below with a short description for each:  </br> </br>
+										<center><img src="images/WAKE_Req.jpg" alt="" title="Wake Request Packet"/></center> </br> </br>
+										
+										The wake request packet is sent from the Pi to the Atmega328P and is basically a request for the reason for its wakeup. The start byte is 0xFE and the opcode is 0x00. </br> </br>
+										
+										<center><img src="images/WAKE_RESP.jpg" alt="" title="Wake Response Packet"/></center> </br> </br>
+										
+										The wake response is the packet sent from the Atmega to the Pi in response to the wake request. The opcode is 0x01. Time interval takes up 4 bytes because it's a long variable at both ends. The INT0 and INT1 are simple toggle bits and hence take up 1 byte each. The rest of the packets are empty. </br> </br>
+										
+										<center><img src="images/SLEEP_REQ.jpg" alt="" title="Sleep Request Packet"/></center> </br> </br>
+										
+										The sleep request is a packet which informs the Atmega that the Pi is going to shut itself down. </br> </br>
+										
+										<center><img src="images/SLEEP_RESP.jpg" alt="" title="Sleep Response Packet"/></center> </br> </br>
+										
+										The sleep response packet is the acknowledgement from the Atmega in response to the sleep request. </br> </br>
+										
+										<center><img src="images/CONFIG_REQ.jpg" alt="" width="99%" height="99%" title="Config Request Packet"/></center> </br> </br>
+										
+										The config request is the packet which is sent when the user has made a configuration change from the GUI. The "INT0 type" and "INT1 type" are currently not in use. They can be configured for falling, rising interrupts in the future. If only the time interval is being sent, then 0s are sent in all the other sections. </br> </br>
+										
+										<center><img src="images/CONFIG_RESP.jpg" alt="" title="Config Response Packet"/></center> </br> </br>
+										
+										The config response packet is the acknowledgement from the Atmega from the Pi for the config request. </br> </br>
+										
+										<center><img src="images/PING_REQ.jpg" alt="" title="Ping Request Packet"/></center> </br> </br>
+										
+										The ping request is the message from the Pi to the Atmega to check whether the communication between the two are working. </br> </br>
+										
+										<center><img src="images/PING_RESP.jpg" alt="" title="Ping Response Packet"/></center> </br> </br>
+										
+										The ping response is the acknowledgement for the ping request. </br> </br>
+										
+										<center><img src="images/JUNK_PKT.png" alt="" title="Junk Packet"/></center> </br> </br>
+										
+										The junk packet is used by the master i.e. the Raspberry Pi to send clock pulses to its slave so that it can transmit its response. It is filled up with 0xFF.  </br> </br>
+										
+								</p>		
+								
 								<br/>
 							</div>
 
