@@ -284,18 +284,6 @@ The microcontroller receives the time interval in the form of seconds from the R
 
 						<div class="yui-gf"> <!--// This is a section -->
 							<div class="yui-u first">
-								<h2>Drawings</h2> <!--// put your heading here -->
-							</div>
-							<div class="yui-u">
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-								</p> <br /> <p> This is an example image  </p> <!--// Put Content here -->
-								<img src="images/incident.png" title="Ha Ha ... that's me" alt="This is a picture" width="420" height="200"/> </p>
-								<p> Credits to XKCD </p>
-							</div>
-						</div><!--// Your section has ended -->
-
-						<div class="yui-gf"> <!--// This is a section -->
-							<div class="yui-u first">
 								<h2>Results</h2> <!--// put your heading here -->
 							</div>
 							<div class="yui-u">
@@ -344,41 +332,66 @@ The microcontroller receives the time interval in the form of seconds from the R
 						</div>
 							<div class="yui-u">
 							All code can be found at the <a href =https://github.com/fkummer/GoodnightPi> GitHub page for GoodnightPi </a>. To help sort through the files and figure out what they all do,
-							the table below lists each file (not including executables) and its Purpose.
+							the table below lists each file (not including executables and text files) and its Purpose.
 
-							<center><table border="1" width="300" height="150" font-size= "6">
+							<center><table border="1" width="600" height="150" font-size= "6">
 							<tr align = "center">
 								<td><strong>Filename</strong></td>
 								<td><strong>Purpose</strong></td>
 							</tr>
 							<tr align = "center">
-							<td>Pin 2</td>
-							<td>5V Input</td>
+							<td>Full_Final</td>
+							<td>This is the sketch folder for the final code that was run on the ATMEGA328P. The code was developed using the Arduino IDE, so it currently exists as a .ino file. The
+							Arduino IDE is required to read and compile it.</td>
 							</tr>
 							<tr align = "center">
-							<td>Pin 6</td>
-							<td>Ground</td>
+							<td>gui2.py</td>
+							<td>This is the python program that runs the PyGame interface for the GUI. Running this brings up the GUI itself.</td>
 							</tr>
 							<tr align = "center">
-							<td>Pin 16</td>
-							<td>Alive Signal</td>
+							<td>guiMain.cpp</td>
+							<td>This program connects the GUI with the SPI interface, as the SPI interface is in C++. </td>
 							</tr>
 							<tr align = "center">
-							<td>Pin 19</td>
-							<td>MOSI</td>
-						</tr>
-							<tr align = "center">
-							<td>Pin 21</td>
-							<td>MISO</td>
+							<td>INT0.py</td>
+							<td>This is the script that executes when a wakeup is caused by interrupt 0.</td>
 							</tr>
 							<tr align = "center">
-							<td>Pin 23</td>
-							<td>SCLK</td>
+							<td>INT1.py</td>
+							<td>This is the script that executes when a wakeup is caused by interrupt 1.</td>
 							</tr>
 							<tr align = "center">
-							<td>Pin 26</td>
-							<td>SS</td>
-						</tr>
+							<td>on_led.c</td>
+							<td>This program runs at startup to set the Alive pin high.</td>
+							</tr>
+							<tr align = "center">
+							<td>raspi_spi.cpp</td>
+							<td>This is the file that controls the SPI interface to the ATMEGA. It includes functions that can be called to send any of the allowed packets to the ATMEGA, as specified by the protocol.</td>
+							</tr>
+							<tr align = "center">
+							<td>spi_checker.cpp</td>
+							<td>This file sends a series of SPI messages to the ATMEGA, checking the SPI connection</td>
+							</tr>
+							<tr align = "center">
+							<td>spitest.cpp</td>
+							<td>This file tests the SPI connection, sending a series of messages to the ATMEGA</td>
+							</tr>
+							<tr align = "center">
+							<td>startup</td>
+							<td>This shell script should be placed in the .bashrc so that it runs at startup. It runs on_led and wake_check</td>
+							</tr>
+							<tr align = "center">
+							<td>Timer.py</td>
+							<td>This is the script that runs when a time interval causes the Pi to wake up</td>
+							</tr>
+							<tr align = "center">
+							<td>ultrasonic.py</td>
+							<td>This is a script for testing the ultrasonic sensors distance readings</td>
+							</tr>
+							<tr align = "center">
+							<td>wake_check.cpp</td>
+							<td>This program always runs at startup. It checks if the Pi is in configuration mode, and if not asks why it woke up. It then runs the appropriate script and once it completes shuts the Pi down.</td>
+							</tr>
 						</table></center>
 
 						</div>
@@ -390,7 +403,9 @@ The microcontroller receives the time interval in the form of seconds from the R
 							<h2>Contact</h2>
 						</div>
 						<div class="yui-u">
-						<p> Your good names. Probably Acknowledgments and Thanks </p>
+						<p> Fred Kummer (fck22@cornell.edu) </p>
+						<br/>
+						<p> Amardeep Manak (asm356@cornell.edu) </p>
 						</div>
 					</div>
 					</div>
