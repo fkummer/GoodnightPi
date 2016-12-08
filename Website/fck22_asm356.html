@@ -10,7 +10,7 @@ Thanks to Gautham Ponnu for the template!
 	<title>ECE 5725 | Goodnight Pi </title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
-	<meta name="keywords" content="Fred Kummer, Amardeep Manak, Goodnight Pi, Raspberry Pi, Power Control, ATMEGA, I2C, SPI, RTC" />
+	<meta name="keywords" content="Fred Kummer, Fred, Kummer, Amardeep Manak, Amardeep, Manak, Goodnight Pi, Raspberry Pi, Power Control, ATMEGA, I2C, SPI, RTC" />
 	<meta name="description" content="This is the webpage for Fred Kummers and Amardeep Manaks final project for ECE 5725, the Goodnight Pi." />
 	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" media="all" />
 	<link rel="stylesheet" type="text/css" href="CSS/report.css" media="all" />
@@ -92,17 +92,17 @@ Thanks to Gautham Ponnu for the template!
 								<br/>
 							  <p><h3><strong>ATMEGA328P</strong></h3></p>
 								<br/>
-								<p>The ATMEGA328P was used to control the power of the Raspberry Pi. This microcontroller was chosen because it can operate with far less power than a Raspberry Pi, is relatively inexpensive, and has extensive support and documentation because of its uses in the Arduino.
+								<p>The first step in designing the project was choosing a microcontroller to control the power. The ATMEGA328P was used to control the power of the Raspberry Pi. This microcontroller was chosen because it can operate with far less power than a Raspberry Pi, is relatively inexpensive, and has extensive support and documentation because of its uses in the Arduino.
 								Even though a stand-alone ATMEGA328P was used, all existing Arduino libraries could be used, making development much simpler. The ATMEGA328P also offers a diverse range of peripherals. It has external interrupts and is capable of communicating using both SPI and I2C, all of
 								which were all necessary functions for this project. Below is a picture of the ATMEGA integrated into the system.</p>
 								<center><img src="images/atmega.jpg" alt="" width="70%" height="70%" title="The ATMEGA in our system"/></center>
 								<br/>
-								<p>The ATMEGA328P was run at 3.3V and 8 MHz. In an Arduino it is typically run at 5V and 16 MHz, but this requires significantly more power. The lower frequency and voltage sacrificed performance to conserve energy, but the performance of the ATMEGA was still more than sufficient
+								<p>Next, the supporting hardware for the micrcontroller had to be designed. The ATMEGA328P was run at 3.3V and 8 MHz. In an Arduino it is typically run at 5V and 16 MHz, but this requires significantly more power. The lower frequency and voltage sacrificed performance to conserve energy, but the performance of the ATMEGA was still more than sufficient
 									for this application. The ATMEGA only drew 3 mA while running, a significant improvement over the 210 mA that the Rasbperry Pi drew when idle.  A schematic for the setup of the ATMEGA can be seen below. </p>
 									<center><img src="images/at_circ.jpg" alt="" width="70%" height="70%" title="Connections between the ATMEGA and the Pi"/></center>
 								<br/>
 
-								<p> The ATMEGA communicated with the Raspberry Pi using SPI, serving as the slave. The ATMEGA also connected to a GPIO pin on the Raspberry Pi that was configured to always output a high signal. When this pin went low, it indicated that the Raspberry Pi had shutdown, and when it went
+								<p> Next, we had to determine how the Pi and the ATMEGA would communicate. Initially we planned to use I2C, but it proved impossible to have the Raspberry Pi act as a slave on an I2C bus and setting up a multi-master bus proved challenging. Instead, SPI was chosen for the link between the Raspberry Pi and the ATMEGA, so that I2C could be used exclusively for the RTC. The ATMEGA communicated with the Raspberry Pi using SPI, serving as the slave. The ATMEGA also connected to a GPIO pin on the Raspberry Pi that was configured to always output a high signal. When this pin went low, it indicated that the Raspberry Pi had shutdown, and when it went
 								high again it indicated that the Raspberry Pi had turned back on successfully. This prevented any premature cycling of power, allowing the ATMEGA to track the exact state of the Raspberry Pi. The diagram below illustrates the connections between the Raspberry Pi and the ATMEGA.</p>
 								<center><img src="images/at_spi.jpg" alt="" width="70%" height="70%" title="Connections between the ATMEGA and the Pi"/></center>
 
@@ -181,13 +181,12 @@ Thanks to Gautham Ponnu for the template!
 								<br/>
 								<p><h3><strong>Complete Circuit</strong></h3></p>
 
-
-
 								<p>A full schematic for the hardware of the project is shown below. Note that this excludes the application specific hardware, such as the ultrasonic sensor and interrupt sources, as they are highly application specfic and were merely for demonstration purposes.
 								The full circuit assembled for the demo is also shown below.</p>
 								<center><img src="images/full_schem.jpg" alt="" width="100%" height="100%" title="Full Schematic"/></center>
+								<center><img src="images/full_circ.jpg" alt="" width="100%" height="100%" title="Assembeled Circuit"/></center>
 
-
+								<br/>
 								<p><h2><strong>Software</strong></h2></p>
 								</br>
 								<p><h3><strong>GUI</strong></h3></p>
@@ -265,6 +264,8 @@ The microcontroller receives the time interval in the form of seconds from the R
 								</p>		
 								
 								<br/>
+								<p><h3><strong>ATMEGA328P</strong></h3></p>
+								<br/>
 							</div>
 
 
@@ -298,8 +299,12 @@ The microcontroller receives the time interval in the form of seconds from the R
 								<h2>Results</h2> <!--// put your heading here -->
 							</div>
 							<div class="yui-u">
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-								</p> <!--// Put Content here -->
+								<p> Overall, the project was successful. The goal of the project was to create additional hardware and a lightweight software framework for the Pi
+			          that enabled power management,and we believe that the final result closely matches that vision. and We were able to implement all of the major functionality we had planned for. The ATMEGA was able to safely control power to the Pi without any damage or corruption of data. The ATMEGA was also able to accurately measure time and wake up the Pi at the appropriately configured intervals.
+								Interrupt support was initially considered a stretch goal, but was successfully integrated and significantly increased the usefulness of the project. The Raspberry Pi also required no significant hardware modification, making the project more easily deployable for others.
+							  The Pi was able to successfully execute different scripts based on the different wakeup sources, and it was possible to easily modify the actions taken by each script, making it easy to implement a variety of applications. Theoretically, anyone should be able to deploy this on their Raspberry Pi with any applicaiton they wish with little modification, though it has only been attemped on one Raspberry Pi so far. The ATMEGA also did prove to use far less power when running by itself than the Pi did when it was idle, resulting in significant power savings.
+							  One area of the project that did not quite meet expectations was the build quality of the hardware. Their was not enough time to move the project to a custom PCB or even to solder onto a perfboard, so it is still only on a breadboard. Moving to a PCB would be ideal, as it would make the project much more reliable and improve its aesthetic.
+							</p>
 							</div>
 						</div><!--// Your section has ended -->
 
@@ -308,7 +313,27 @@ The microcontroller receives the time interval in the form of seconds from the R
 								<h2>Conclusion</h2> <!--// put your heading here -->
 							</div>
 							<div class="yui-u">
-								<p>Yay !!! Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+								<p> The project met our goals, successfully reducing the power consumption of the Pi and making it easy to integrate a large number of different applications into this power management framework.
+									Hopefully, this work can be used to help improve the lifetime of future projects and to allow the Raspberry Pi to be used in a wider array of applications, especially with low-power requirements.
+									Learning how to integrate the Raspberry Pi with micrcontrollers such as the ATMEGA328P was an interesting experience, as they seem to be a pairing with a large number of potential applications together.
+									Working out the communication and coordination between them turned out to be the most challenging aspect of the project, but was certainly worth it. Focusing more on the quality of the hardware early on
+									would have significantly improved this project however, as starting work early on moving the hardware to a more permanent medium than a breadboard would have significantly improved its reliability and
+									the look of the project.
+								</p> <!--// Put Content here -->
+							</div>
+						</div><!--// Your section has ended -->
+
+						<div class="yui-gf"> <!--// This is a section -->
+							<div class="yui-u first">
+								<h2>Future Work</h2> <!--// put your heading here -->
+							</div>
+							<div class="yui-u">
+								<p> There are various extensions and improvements we would like to make the project. First and foremost, improving the quality of hardware would be ideal. We would like to create a custom PCB for the project, or even transfer it onto a Raspberry Pi Hat, to make it much more reliable and easier
+										to use. We would also like to streamline some of the software setup for putting the project onto a new Rasbperry Pi. Currently it requires the files to be placed into a specific folder, and the user has to place the scripts they want to run into pre-define files.
+										Having some form of installer and configuration interface for initial setup would help others to use this project more easily. We would also like to be able to configure the type of interrupts that trigger wakeup. Currently, only rising edges will trigger wakeup, but
+										ATMEGA is capable of capturing various other interrupt types. Adding the ability to configure the type of interrupt that triggers wakeup would make integrating various interrupt sources easier. Finally, optimizing the boot time of the Rasbperry Pi would also be a good addition
+										as currently it takes around 30 seconds for the Pi to boot, which means it is on for a longer time and consuming extra power. Shortening this boot time would improve the power savings.
+										</thead>
 								</p> <!--// Put Content here -->
 							</div>
 						</div><!--// Your section has ended -->
@@ -318,61 +343,43 @@ The microcontroller receives the time interval in the form of seconds from the R
 							<h2>Code Appendix</h2>
 						</div>
 							<div class="yui-u">
-							<!-- This is a good idea. HTML generated using hilite.me -->
-							<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #333333">*</span>
- <span style="color: #333333">*</span> blink.c<span style="color: #333333">:</span>
- <span style="color: #333333">*</span>      blinks the first LED
- <span style="color: #333333">*</span>      Gordon Henderson, projects<span style="color: #FF0000; background-color: #FFAAAA">@</span>drogon.net
- <span style="color: #FF0000; background-color: #FFAAAA">*/</span>
+							All code can be found at the <a href =https://github.com/fkummer/GoodnightPi> GitHub page for GoodnightPi </a>. To help sort through the files and figure out what they all do,
+							the table below lists each file (not including executables) and its Purpose.
 
-<span style="color: #557799">#include &lt;stdio.h&gt;</span>
-<span style="color: #557799">#include &lt;wiringPi.h&gt;</span>
-
-<span style="color: #333399; font-weight: bold">int</span> main (<span style="color: #333399; font-weight: bold">void</span>)
-{
-  printf (<span style="background-color: #fff0f0">&quot;Raspberry Pi blink</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>) ;
-
-  <span style="color: #008800; font-weight: bold">if</span> (wiringPiSetup () <span style="color: #333333">==</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>)
-    <span style="color: #008800; font-weight: bold">return</span> <span style="color: #0000DD; font-weight: bold">1</span> ;
-
-  pinMode (<span style="color: #0000DD; font-weight: bold">0</span>, OUTPUT) ;         <span style="color: #888888">// aka BCM_GPIO pin 17</span>
-
-  <span style="color: #008800; font-weight: bold">for</span> (;;)
-  {
-    digitalWrite (<span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">1</span>) ;       <span style="color: #888888">// On</span>
-    delay (<span style="color: #0000DD; font-weight: bold">500</span>) ;               <span style="color: #888888">// mS</span>
-    digitalWrite (<span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">0</span>) ;       <span style="color: #888888">// Off</span>
-    delay (<span style="color: #0000DD; font-weight: bold">500</span>) ;
-  }
-  <span style="color: #008800; font-weight: bold">return</span> <span style="color: #0000DD; font-weight: bold">0</span> ;
-}
-</pre></td></tr></table></div>
+							<center><table border="1" width="300" height="150" font-size= "6">
+							<tr align = "center">
+								<td><strong>Filename</strong></td>
+								<td><strong>Purpose</strong></td>
+							</tr>
+							<tr align = "center">
+							<td>Pin 2</td>
+							<td>5V Input</td>
+							</tr>
+							<tr align = "center">
+							<td>Pin 6</td>
+							<td>Ground</td>
+							</tr>
+							<tr align = "center">
+							<td>Pin 16</td>
+							<td>Alive Signal</td>
+							</tr>
+							<tr align = "center">
+							<td>Pin 19</td>
+							<td>MOSI</td>
+						</tr>
+							<tr align = "center">
+							<td>Pin 21</td>
+							<td>MISO</td>
+							</tr>
+							<tr align = "center">
+							<td>Pin 23</td>
+							<td>SCLK</td>
+							</tr>
+							<tr align = "center">
+							<td>Pin 26</td>
+							<td>SS</td>
+						</tr>
+						</table></center>
 
 						</div>
 					</div>
@@ -381,6 +388,26 @@ The microcontroller receives the time interval in the form of seconds from the R
 					<div class="yui-gf">
 						<div class="yui-u first">
 							<h2>Contact</h2>
+						</div>
+						<div class="yui-u">
+						<p> Your good names. Probably Acknowledgments and Thanks </p>
+						</div>
+					</div>
+					</div>
+
+					<div class="yui-gf">
+						<div class="yui-u first">
+							<h2>References</h2>
+						</div>
+						<div class="yui-u">
+						<p> Your good names. Probably Acknowledgments and Thanks </p>
+						</div>
+					</div>
+					</div>
+
+					<div class="yui-gf">
+						<div class="yui-u first">
+							<h2>Acknowledgements</h2>
 						</div>
 						<div class="yui-u">
 						<p> Your good names. Probably Acknowledgments and Thanks </p>
