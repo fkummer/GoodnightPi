@@ -97,20 +97,76 @@ Thanks to Gautham Ponnu for the template!
 								which were all necessary functions for this project. Below is a picture of the ATMEGA integrated into the system.</p>
 								<center><img src="images/atmega.jpg" alt="" width="70%" height="70%" title="The ATMEGA in our system"/></center>
 								<br/>
-								<p>The ATMEGA328P communicated with the Raspberry Pi using SPI, serving as the slave. The ATMEGA also connected to a GPIO pin on the Raspberry Pi that was configured to always output a high signal. When this pin went low, it indicated that the Raspberry Pi had shutdown, and when it went
-								high again it indicated that the Raspberry Pi had turned back on successfully. This prevented any premature cycling of power, allowing the ATMEGA to track the exact state of the Raspberry Pi. The diagram below illustrates the connections between the Raspberry Pi and the ATMEGA.</p>
-								<center><img src="images/at_spi.jpg" alt="" width="70%" height="70%" title="Block Diagram of System"/></center>
+								<p>The ATMEGA328P was run at 3.3V and 8 MHz. In an Arduino it is typically run at 5V and 16 MHz, but this requires significantly more power. The lower frequency and voltage sacrificed performance to conserve energy, but the performance of the ATMEGA was still more than sufficient
+									for this application. The ATMEGA only drew 3 mA while running, a significant improvement over the 210 mA that the Rasbperry Pi drew when idle.  A schematic for the setup of the ATMEGA can be seen below. </p>
+									<center><img src="images/at_circ.jpg" alt="" width="70%" height="70%" title="Connections between the ATMEGA and the Pi"/></center>
+								<br/>
 
-								<p>Whenever the Raspberry Pi sent a request to thge the ATMEGA, it would process the request and send back the appropriate response as specified by the communication protocol (see the Protocol section for more information). When the ATMEGA
-								receives a wake request, it responds by indicating whether it was the timer, interrupt 0, or interrupt 1 that woke it up. This allows the Raspberry Pi to take the appropriate action corresponding to that wake up source. When the ATMEGA receives a sleep request,
-								it</p>
+								<p> The ATMEGA communicated with the Raspberry Pi using SPI, serving as the slave. The ATMEGA also connected to a GPIO pin on the Raspberry Pi that was configured to always output a high signal. When this pin went low, it indicated that the Raspberry Pi had shutdown, and when it went
+								high again it indicated that the Raspberry Pi had turned back on successfully. This prevented any premature cycling of power, allowing the ATMEGA to track the exact state of the Raspberry Pi. The diagram below illustrates the connections between the Raspberry Pi and the ATMEGA.</p>
+								<center><img src="images/at_spi.jpg" alt="" width="70%" height="70%" title="Connections between the ATMEGA and the Pi"/></center>
+
+								<p>Whenever the Raspberry Pi sent a request to the the ATMEGA, it would process the request and send back the appropriate response as specified by the communication protocol (see the Protocol section for more information). The ATMEGA could be configured
+								to trigger wakeup of the Raspberry Pi from three different sources: a timer, external interrupt 0, and external interrupt 1. The timer could be set to various time intervals, and was constantly checked by querying the RTC for the current time and comparing that
+								to the time the timer began. If the appropriate amount of time had passed since the Pi powered down, the ATMEGA would wake the Pi back up. External interrupt 0 and external interrupt 1 on the ATMEGA could also be configured to trigger a wakeup on a rising edge.
+							 	Any type of hardware can be attached to these interrupt pins, it simply needs to be able to generate a rising edge at the desired time. For example, in the example application built for this project interrupt 0 was attached to a button and interrupt 1 was attached to a voltage
+								divider with a photoresistor. This allowed the Pi to be woken up at any time by a user pressing the button or by increasing the light level on the photoresistor. These interrupts could be used for a wide variety of applications, such as waking the Pi up when something gets within a certain proximity
+							  or based on a variety of environmental factors, such as temperature or light. The ATMEGA controlled the power to the Raspberry Pi by simply changing the state of a GPIO pin that connected to the Power Control Circuit</p>
 								</p> <!--// Put Content here -->
 								<br/>
 								<p><h3><strong>Raspberry Pi</strong></h3></p>
+								<p>The Raspberry Pi 2 Model B was used for the project, though none of the functionality of the project relies specifically on special features of this model. Theoretically the project could be easily transferred to different models of the Raspberry Pi.
+								The Raspberry Pi did not require any special hardware modification, but some of its GPIO pins had to be reserved to connect with the ATMEGA. The physical pins that were used on the Pi and their function is listed below.</p>
+								<center><table border="1" width="300" height="150" font-size= "6">
+								<tr align = "center">
+									<td><strong>Raspberry Pi Physical Pin</strong></td>
+									<td><strong>Function</strong></td>
+								</tr>
+								<tr align = "center">
+								<td>Pin 2</td>
+								<td>5V Input</td>
+								</tr>
+								<tr align = "center">
+								<td>Pin 6</td>
+								<td>Ground</td>
+								</tr>
+								<tr align = "center">
+								<td>Pin 16</td>
+								<td>Alive Signal</td>
+								</tr>
+								<tr align = "center">
+								<td>Pin 19</td>
+								<td>MOSI</td>
+							</tr>
+								<tr align = "center">
+								<td>Pin 21</td>
+								<td>MISO</td>
+								</tr>
+								<tr align = "center">
+								<td>Pin 23</td>
+								<td>SCLK</td>
+								</tr>
+								<tr align = "center">
+								<td>Pin 26</td>
+								<td>SS</td>
+							</tr>
+							</table></center>
 								<br/>
+
 								<p><h3><strong>Power Control Circuit</strong></h3></p>
+
+								<p> The Power Control Circuit allowed the ATMEGA to switch 5V to power the the Pi using a 3.3V signal from the ATMEGA's GPIO pin. Also, since power was being provided to the Pi through its 5V pin and bypassing the protection circuitry
+									provided on the Pi itself, this protection circuitry was recreated. This consisted of a 2A quick-blow fuse, a diode to prevent reversed current flow, and a 1 uF decoupling capacitor. Two transistors were used to switch power to the Pi, one NFET
+									and one PFET. The FQP30N06L was used as the NFET and the FQP27P06 was used as the PFET. Two of them were used for level-shifting and inversion, allowing a 3.3V signal to safely control 5V and allowing power to be connected only when the signal was
+									high. A schematic of the power control circuit is shown below.</p>
+									<center><img src="images/pcu.jpg" alt="" width="70%" height="70%" title="Connections between the ATMEGA and the Pi"/></center>
 								<br/>
-								<p><h3><strong>Raspberry Pi</strong></h3></p>
+
+								<p><h3><strong>RTC</strong></h3></p>
+
+								<p>
+							  </p>
+
 								<br/>
 								<p><h3><strong>Complete Circuit</strong></h3></p>
 
