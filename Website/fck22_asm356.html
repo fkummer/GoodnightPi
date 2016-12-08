@@ -268,61 +268,43 @@ Thanks to Gautham Ponnu for the template!
 							<h2>Code Appendix</h2>
 						</div>
 							<div class="yui-u">
-							<!-- This is a good idea. HTML generated using hilite.me -->
-							<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><table><tr><td><pre style="margin: 0; line-height: 125%"> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12
-13
-14
-15
-16
-17
-18
-19
-20
-21
-22
-23
-24
-25
-26
-27</pre></td><td><pre style="margin: 0; line-height: 125%"><span style="color: #333333">*</span>
- <span style="color: #333333">*</span> blink.c<span style="color: #333333">:</span>
- <span style="color: #333333">*</span>      blinks the first LED
- <span style="color: #333333">*</span>      Gordon Henderson, projects<span style="color: #FF0000; background-color: #FFAAAA">@</span>drogon.net
- <span style="color: #FF0000; background-color: #FFAAAA">*/</span>
+							All code can be found at the <a href =https://github.com/fkummer/GoodnightPi> GitHub page for GoodnightPi </a>. To help sort through the files and figure out what they all do,
+							the table below lists each file (not including executables) and its Purpose.
 
-<span style="color: #557799">#include &lt;stdio.h&gt;</span>
-<span style="color: #557799">#include &lt;wiringPi.h&gt;</span>
-
-<span style="color: #333399; font-weight: bold">int</span> main (<span style="color: #333399; font-weight: bold">void</span>)
-{
-  printf (<span style="background-color: #fff0f0">&quot;Raspberry Pi blink</span><span style="color: #666666; font-weight: bold; background-color: #fff0f0">\n</span><span style="background-color: #fff0f0">&quot;</span>) ;
-
-  <span style="color: #008800; font-weight: bold">if</span> (wiringPiSetup () <span style="color: #333333">==</span> <span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">1</span>)
-    <span style="color: #008800; font-weight: bold">return</span> <span style="color: #0000DD; font-weight: bold">1</span> ;
-
-  pinMode (<span style="color: #0000DD; font-weight: bold">0</span>, OUTPUT) ;         <span style="color: #888888">// aka BCM_GPIO pin 17</span>
-
-  <span style="color: #008800; font-weight: bold">for</span> (;;)
-  {
-    digitalWrite (<span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">1</span>) ;       <span style="color: #888888">// On</span>
-    delay (<span style="color: #0000DD; font-weight: bold">500</span>) ;               <span style="color: #888888">// mS</span>
-    digitalWrite (<span style="color: #0000DD; font-weight: bold">0</span>, <span style="color: #0000DD; font-weight: bold">0</span>) ;       <span style="color: #888888">// Off</span>
-    delay (<span style="color: #0000DD; font-weight: bold">500</span>) ;
-  }
-  <span style="color: #008800; font-weight: bold">return</span> <span style="color: #0000DD; font-weight: bold">0</span> ;
-}
-</pre></td></tr></table></div>
+							<center><table border="1" width="300" height="150" font-size= "6">
+							<tr align = "center">
+								<td><strong>Filename</strong></td>
+								<td><strong>Purpose</strong></td>
+							</tr>
+							<tr align = "center">
+							<td>Pin 2</td>
+							<td>5V Input</td>
+							</tr>
+							<tr align = "center">
+							<td>Pin 6</td>
+							<td>Ground</td>
+							</tr>
+							<tr align = "center">
+							<td>Pin 16</td>
+							<td>Alive Signal</td>
+							</tr>
+							<tr align = "center">
+							<td>Pin 19</td>
+							<td>MOSI</td>
+						</tr>
+							<tr align = "center">
+							<td>Pin 21</td>
+							<td>MISO</td>
+							</tr>
+							<tr align = "center">
+							<td>Pin 23</td>
+							<td>SCLK</td>
+							</tr>
+							<tr align = "center">
+							<td>Pin 26</td>
+							<td>SS</td>
+						</tr>
+						</table></center>
 
 						</div>
 					</div>
