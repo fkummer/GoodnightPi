@@ -10,7 +10,7 @@ Thanks to Gautham Ponnu for the template!
 	<title>ECE 5725 | Goodnight Pi </title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 
-	<meta name="keywords" content="Fred Kummer, Amardeep Manak, Goodnight Pi, Raspberry Pi, Power Control, ATMEGA, I2C, SPI, RTC" />
+	<meta name="keywords" content="Fred Kummer, Fred, Kummer, Amardeep Manak, Amardeep, Manak, Goodnight Pi, Raspberry Pi, Power Control, ATMEGA, I2C, SPI, RTC" />
 	<meta name="description" content="This is the webpage for Fred Kummers and Amardeep Manaks final project for ECE 5725, the Goodnight Pi." />
 	<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" media="all" />
 	<link rel="stylesheet" type="text/css" href="CSS/report.css" media="all" />
@@ -92,17 +92,17 @@ Thanks to Gautham Ponnu for the template!
 								<br/>
 							  <p><h3><strong>ATMEGA328P</strong></h3></p>
 								<br/>
-								<p>The ATMEGA328P was used to control the power of the Raspberry Pi. This microcontroller was chosen because it can operate with far less power than a Raspberry Pi, is relatively inexpensive, and has extensive support and documentation because of its uses in the Arduino.
+								<p>The first step in designing the project was choosing a microcontroller to control the power. The ATMEGA328P was used to control the power of the Raspberry Pi. This microcontroller was chosen because it can operate with far less power than a Raspberry Pi, is relatively inexpensive, and has extensive support and documentation because of its uses in the Arduino.
 								Even though a stand-alone ATMEGA328P was used, all existing Arduino libraries could be used, making development much simpler. The ATMEGA328P also offers a diverse range of peripherals. It has external interrupts and is capable of communicating using both SPI and I2C, all of
 								which were all necessary functions for this project. Below is a picture of the ATMEGA integrated into the system.</p>
 								<center><img src="images/atmega.jpg" alt="" width="70%" height="70%" title="The ATMEGA in our system"/></center>
 								<br/>
-								<p>The ATMEGA328P was run at 3.3V and 8 MHz. In an Arduino it is typically run at 5V and 16 MHz, but this requires significantly more power. The lower frequency and voltage sacrificed performance to conserve energy, but the performance of the ATMEGA was still more than sufficient
+								<p>Next, the supporting hardware for the micrcontroller had to be designed. The ATMEGA328P was run at 3.3V and 8 MHz. In an Arduino it is typically run at 5V and 16 MHz, but this requires significantly more power. The lower frequency and voltage sacrificed performance to conserve energy, but the performance of the ATMEGA was still more than sufficient
 									for this application. The ATMEGA only drew 3 mA while running, a significant improvement over the 210 mA that the Rasbperry Pi drew when idle.  A schematic for the setup of the ATMEGA can be seen below. </p>
 									<center><img src="images/at_circ.jpg" alt="" width="70%" height="70%" title="Connections between the ATMEGA and the Pi"/></center>
 								<br/>
 
-								<p> The ATMEGA communicated with the Raspberry Pi using SPI, serving as the slave. The ATMEGA also connected to a GPIO pin on the Raspberry Pi that was configured to always output a high signal. When this pin went low, it indicated that the Raspberry Pi had shutdown, and when it went
+								<p> Next, we had to determine how the Pi and the ATMEGA would communicate. Initially we planned to use I2C, but it proved impossible to have the Raspberry Pi act as a slave on an I2C bus and setting up a multi-master bus proved challenging. Instead, SPI was chosen for the link between the Raspberry Pi and the ATMEGA, so that I2C could be used exclusively for the RTC. The ATMEGA communicated with the Raspberry Pi using SPI, serving as the slave. The ATMEGA also connected to a GPIO pin on the Raspberry Pi that was configured to always output a high signal. When this pin went low, it indicated that the Raspberry Pi had shutdown, and when it went
 								high again it indicated that the Raspberry Pi had turned back on successfully. This prevented any premature cycling of power, allowing the ATMEGA to track the exact state of the Raspberry Pi. The diagram below illustrates the connections between the Raspberry Pi and the ATMEGA.</p>
 								<center><img src="images/at_spi.jpg" alt="" width="70%" height="70%" title="Connections between the ATMEGA and the Pi"/></center>
 
@@ -181,15 +181,15 @@ Thanks to Gautham Ponnu for the template!
 								<br/>
 								<p><h3><strong>Complete Circuit</strong></h3></p>
 
-
-
 								<p>A full schematic for the hardware of the project is shown below. Note that this excludes the application specific hardware, such as the ultrasonic sensor and interrupt sources, as they are highly application specfic and were merely for demonstration purposes.
 								The full circuit assembled for the demo is also shown below.</p>
 								<center><img src="images/full_schem.jpg" alt="" width="100%" height="100%" title="Full Schematic"/></center>
 								<center><img src="images/full_circ.jpg" alt="" width="100%" height="100%" title="Assembeled Circuit"/></center>
 
-
+								<br/>
 								<p><h2><strong>Software</strong></h2></p>
+								<br/>
+								<p><h3><strong>ATMEGA328P</strong></h3></p>
 								<br/>
 							</div>
 
@@ -238,7 +238,27 @@ Thanks to Gautham Ponnu for the template!
 								<h2>Conclusion</h2> <!--// put your heading here -->
 							</div>
 							<div class="yui-u">
-								<p>Yay !!! Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+								<p> The project met our goals, successfully reducing the power consumption of the Pi and making it easy to integrate a large number of different applications into this power management framework.
+									Hopefully, this work can be used to help improve the lifetime of future projects and to allow the Raspberry Pi to be used in a wider array of applications, especially with low-power requirements.
+									Learning how to integrate the Raspberry Pi with micrcontrollers such as the ATMEGA328P was an interesting experience, as they seem to be a pairing with a large number of potential applications together.
+									Working out the communication and coordination between them turned out to be the most challenging aspect of the project, but was certainly worth it. Focusing more on the quality of the hardware early on
+									would have significantly improved this project however, as starting work early on moving the hardware to a more permanent medium than a breadboard would have significantly improved its reliability and
+									the look of the project.
+								</p> <!--// Put Content here -->
+							</div>
+						</div><!--// Your section has ended -->
+
+						<div class="yui-gf"> <!--// This is a section -->
+							<div class="yui-u first">
+								<h2>Future Work</h2> <!--// put your heading here -->
+							</div>
+							<div class="yui-u">
+								<p> There are various extensions and improvements we would like to make the project. First and foremost, improving the quality of hardware would be ideal. We would like to create a custom PCB for the project, or even transfer it onto a Raspberry Pi Hat, to make it much more reliable and easier
+										to use. We would also like to streamline some of the software setup for putting the project onto a new Rasbperry Pi. Currently it requires the files to be placed into a specific folder, and the user has to place the scripts they want to run into pre-define files.
+										Having some form of installer and configuration interface for initial setup would help others to use this project more easily. We would also like to be able to configure the type of interrupts that trigger wakeup. Currently, only rising edges will trigger wakeup, but
+										ATMEGA is capable of capturing various other interrupt types. Adding the ability to configure the type of interrupt that triggers wakeup would make integrating various interrupt sources easier. Finally, optimizing the boot time of the Rasbperry Pi would also be a good addition
+										as currently it takes around 30 seconds for the Pi to boot, which means it is on for a longer time and consuming extra power. Shortening this boot time would improve the power savings. 
+										</thead>
 								</p> <!--// Put Content here -->
 							</div>
 						</div><!--// Your section has ended -->
