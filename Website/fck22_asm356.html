@@ -86,13 +86,24 @@ Thanks to Gautham Ponnu for the template!
 								to trigger the ATMEGA to wake up the Raspberry Pi can be configured using a GUI on the Raspberry Pi. The ATMEGA then sets the state of the Power Control Circuit to control the power to the Raspberry Pi. Once configured and running, the system continuously cycles through a sequence
 								of turning the Raspberry Pi on, letting it complete whatever application is desired, and shutting down the Pi again until the time interval expires or an interrrupt arives. A high level view of the system components is caputred in the block diagram below.
 								</p>
-								<center><img src="images/block.jpg" alt="" width="70%" height="70%" title="Sample Specgram"/></center>
+								<center><img src="images/block.jpg" alt="" width="70%" height="70%" title="Block Diagram of System"/></center>
 								<br/>
 								<p><h2><strong>Hardware</strong></h2></p>
 								<br/>
 							  <p><h3><strong>ATMEGA328P</strong></h3></p>
 								<br/>
-								<p>The ATMEGA IS COOL!
+								<p>The ATMEGA328P was used to control the power of the Raspberry Pi. This microcontroller was chosen because it can operate with far less power than a Raspberry Pi, is relatively inexpensive, and has extensive support and documentation because of its uses in the Arduino.
+								Even though a stand-alone ATMEGA328P was used, all existing Arduino libraries could be used, making development much simpler. The ATMEGA328P also offers a diverse range of peripherals. It has external interrupts and is capable of communicating using both SPI and I2C, all of
+								which were all necessary functions for this project. Below is a picture of the ATMEGA integrated into the system.</p>
+								<center><img src="images/atmega.jpg" alt="" width="70%" height="70%" title="The ATMEGA in our system"/></center>
+								<br/>
+								<p>The ATMEGA328P communicated with the Raspberry Pi using SPI, serving as the slave. The ATMEGA also connected to a GPIO pin on the Raspberry Pi that was configured to always output a high signal. When this pin went low, it indicated that the Raspberry Pi had shutdown, and when it went
+								high again it indicated that the Raspberry Pi had turned back on successfully. This prevented any premature cycling of power, allowing the ATMEGA to track the exact state of the Raspberry Pi. The diagram below illustrates the connections between the Raspberry Pi and the ATMEGA.</p>
+								<center><img src="images/at_spi.jpg" alt="" width="70%" height="70%" title="Block Diagram of System"/></center>
+
+								<p>Whenever the Raspberry Pi sent a request to thge the ATMEGA, it would process the request and send back the appropriate response as specified by the communication protocol (see the Protocol section for more information). When the ATMEGA
+								receives a wake request, it responds by indicating whether it was the timer, interrupt 0, or interrupt 1 that woke it up. This allows the Raspberry Pi to take the appropriate action corresponding to that wake up source. When the ATMEGA receives a sleep request,
+								it</p>
 								</p> <!--// Put Content here -->
 								<br/>
 								<p><h3><strong>Raspberry Pi</strong></h3></p>
