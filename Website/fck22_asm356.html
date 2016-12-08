@@ -48,6 +48,13 @@ Thanks to Gautham Ponnu for the template!
 									To be able to deploy Raspberry Pi's in outdoor or any low-power, long-term applications, additional power control and management hardware is needed.
 								</p> <!--// Put Content here -->
 
+								<br/>
+
+								<p>To address this issue we created a project that interefaces witht the Raspberry Pi and manages its power consumption by scheduling when it should be on and off. This project integrates the popular ATMEGA328
+								,power control circuitry, and a real-time-clock (RTC) with the Raspberry Pi. This allows the ATMEGA328P to control power to the Raspberry Pi, turning it off wwhen it is done with its application and turning it back
+							   on when its need to run again. The scheduling for powering on the Raspberry Pi can be based on timing or external events that are used to generate interrupts. By having the Raspberry Pi spend a significant portion of its
+							 	time powered off instead of sitting idle, a great deal of power can be saved.</p>
+
 								<p> <br/>
 
 								</p>
@@ -59,7 +66,9 @@ Thanks to Gautham Ponnu for the template!
 								<h2>Objective</h2> <!--// put your heading here -->
 							</div>
 							<div class="yui-u">
-								<p>
+								<p> The goal of this project is to develop a low cost device that can be integrated with the Raspberry Pi to reduce power consumption by allowing the Pi to turn on and off based on a timed schedule or external events.
+										This would allow the Raspberry Pi to be used in a wider variety of applications. Specifically, outdoor environmental data collection projects were the motivation for this system.
+										With improved power management these projects could be left to collect data for a long period of time using the Raspberry Pi without losing power.
 								</p> <!--// Put Content here -->
 							</div>
 						</div><!--// Your section has ended -->
@@ -69,8 +78,31 @@ Thanks to Gautham Ponnu for the template!
 								<h2>Design</h2> <!--// put your heading here -->
 							</div>
 							<div class="yui-u">
-								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+								<p><h2><strong>Design Overview</strong></h2></p>
+								<p>
+								At a high level the design consists of four major hardware components. These are the Raspberry Pi itself, the ATMEGA328P, the RTC, and the Power Control Circuit. The Raspberry Pi wakes up when the ATMEGA328P provides it with power,
+								and performs some action or series of actions based on why it was woken up. It then shuts itself down and alerts the ATMEGA that it can turn off power to the Pi. The Raspberry Pi and ATMEGA communicate with a custom protocol using SPI. The ATMEGA tracks
+								the state of the Raspberry Pi and determines if it should be powered on or turned off. It determines this based on the time provided by the RTC and the state of its interrupt pins. The ATMEGA and the RTC communicate using I2C. The time interval and interrupts that should be able
+								to trigger the ATMEGA to wake up the Raspberry Pi can be configured using a GUI on the Raspberry Pi. The ATMEGA then sets the state of the Power Control Circuit to control the power to the Raspberry Pi. Once configured and running, the system continuously cycles through a sequence
+								of turning the Raspberry Pi on, letting it complete whatever application is desired, and shutting down the Pi again until the time interval expires or an interrrupt arives. A high level view of the system components is caputred in the block diagram below.
+								</p>
+								<center><img src="images/block.jpg" alt="" width="70%" height="70%" title="Sample Specgram"/></center>
+								<br/>
+								<p><h2><strong>Hardware</strong></h2></p>
+								<br/>
+							  <p><h3><strong>ATMEGA328P</strong></h3></p>
+								<br/>
+								<p>The ATMEGA IS COOL!
 								</p> <!--// Put Content here -->
+								<br/>
+								<p><h3><strong>Raspberry Pi</strong></h3></p>
+								<br/>
+								<p><h3><strong>Power Control Circuit</strong></h3></p>
+								<br/>
+								<p><h3><strong>Raspberry Pi</strong></h3></p>
+								<br/>
+								<p><h3><strong>Complete Circuit</strong></h3></p>
+
 							</div>
 						</div><!--// Your section has ended -->
 
