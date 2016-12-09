@@ -282,6 +282,20 @@ The microcontroller receives the time interval in the form of seconds from the R
 								<center><img src="images/atmega_cycle.jpg" alt="" width="70%" height="70%" title="ATMEGA Wakeup Cycle"/></center>
 
 								<p>
+								
+								</br></br>
+								<p><h3><strong>Raspberry Pi</strong></h3></p>
+								</br>
+								<p>
+										The entire software on the raspberry pi is written in C++ and is compiled using g++. The WiringPi library is used for getting the SPI transmit and receive functions. This SPI, as mentioned in the handshaking section is used for communicating with the Atmega328P. When the Pi boots up it sends a wake request to the Atmega asking the source for its wake up. This is mainly done to measure and store data for the application mapped to the source. The Atmega sends the source and if it's due to the time interval, then the "ultrasonic.py" script is called which does its measurements and appends it to a file only meant for the time interval source. Similarly there are separate log files for INT0 and INT1 interrupts. Once the measurements are done, the Pi prepares to shut itself down. Before doing that it sends a message informing the Atmega thats its going to sleep. Once the Atmega transfers the response, the Pi shuts itself down.  </br> </br>
+
+
+The snapshot of the cycle described above is shown below: </br> </br>
+
+<center><img src="images/pi_cycle.jpg" alt="" width="70%" height="70%" title="Pi Shutdown Cycle"/></center>  </br> </br>
+
+								</p>
+								
 							</div>
 
 
