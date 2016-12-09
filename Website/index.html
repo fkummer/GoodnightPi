@@ -272,6 +272,23 @@ The microcontroller receives the time interval in the form of seconds from the R
 
 								<center><img src="images/atmega_cycle.jpg" alt="" width="70%" height="70%" title="ATMEGA Wakeup Cycle"/></center>
 
+
+
+								<p>
+
+								</br></br>
+								<p><h3><strong>Raspberry Pi</strong></h3></p>
+								</br>
+								<p>
+										The entire software on the raspberry pi is written in C++ and is compiled using g++. The WiringPi library is used for getting the SPI transmit and receive functions. This SPI, as mentioned in the handshaking section is used for communicating with the Atmega328P. When the Pi boots up it sends a wake request to the Atmega asking the source for its wake up. This is mainly done to measure and store data for the application mapped to the source. The Atmega sends the source and if it's due to the time interval, then the "ultrasonic.py" script is called which does its measurements and appends it to a file only meant for the time interval source. Similarly there are separate log files for INT0 and INT1 interrupts. Once the measurements are done, the Pi prepares to shut itself down. Before doing that it sends a message informing the Atmega thats its going to sleep. Once the Atmega transfers the response, the Pi shuts itself down.  </br> </br>
+
+
+The snapshot of the cycle described above is shown below: </br> </br>
+
+<center><img src="images/pi_cycle.jpg" alt="" width="70%" height="70%" title="Pi Shutdown Cycle"/></center>  </br> </br>
+
+								</p>
+
 								<br/>
 								<p><h2><strong>Parts and Budget</strong></h2></p>
 								<center><table border="1" width="300" height="150" font-size= "6">
@@ -324,6 +341,74 @@ The microcontroller receives the time interval in the form of seconds from the R
 
 
 						</div><!--// Your section has ended -->
+
+
+						<div class="yui-gf"> <!--// This is a section -->
+							<div class="yui-u first">
+								<h2>Testing</h2> <!--// put your heading here -->
+							</div>
+							<div class="yui-u">
+								<p>Testing was carried out in various stages. First each portion of the hardware was tested in isolation. The Power Control Circuit was constructed and its output was measured using a multimeter to ensure that it did in fact switch with the appropriate input signals
+									 and that it could handle the needed output current. The ATMEGA328P circuit was then built and tested in isolation to ensure that the microcontroller could run properly at 8 MHz and 3.3V. This was tested using simple programs that were timing dependent, such as timed blinking of an LED, to ensure that
+									 the oscillator was set properly. SPI and I2C communication were first tested in isolation by connecting the ATMEGA328P and Raspberry Pi to oscilloscopes and verifying the waveform.</p>
+
+								 <br/>
+
+								 <p>Initial software testing was simplified by begnning development using an Arduino development board. This isolated software issues from any hardware issues with setting up the ATMEGA328P. Various SPI verification scripts were created on the Raspberry Pi to check the integrity of its communication
+								 with the Arduino and try to get a qualitative idea of the packet loss rate. Use of the Serial ports on the Arduino was also a critical part of software testing, allowing a great deal of helpful debugging data to be printed out. This made finding and resolving errors much simpler.
+								</p> <!--// Put Content here -->
+							</div>
+						</div><!--// Your section has ended -->
+
+
+								<center><table border="1" width="300" height="150" font-size= "6">
+								<tr align = "center">
+									<td><strong>Part Name</strong></td>
+									<td><strong>Price</strong></td>
+								</tr>
+								<tr align = "center">
+								<td>Raspberry Pi 2 Model B</td>
+								<td>$35.00</td>
+								</tr>
+								<tr align = "center">
+								<td>ATMEGA328P</td>
+								<td>$4.00</td>
+								</tr>
+								<tr align = "center">
+								<td>DS1307 Breakout Board</td>
+								<td>$7.95</td>
+								</tr>
+								<tr align = "center">
+								<td>8 MHz Crystal</td>
+								<td>$0.75</td>
+							</tr>
+								<tr align = "center">
+								<td>MCP1702 LDO Regulator</td>
+								<td>$0.48</td>
+								</tr>
+								<tr align = "center">
+								<td>FQP30N06L</td>
+								<td>$0.95</td>
+								</tr>
+								<tr align = "center">
+								<td>FQP27P06</td>
+								<td>$0.95</td>
+							</tr>
+								<tr align = "center">
+								<td>2A fuse</td>
+								<td>$0.20</td>
+							</tr>
+							<tr align = "center">
+							<td>1N5187 Diode</td>
+							<td>$0.30</td>
+							</tr>
+							<tr align = "center">
+							<td><strong>Total</strong></td>
+							<td>$50.58</td>
+							</tr>
+							</table></center>
+
+
 
 
 						<div class="yui-gf"> <!--// This is a section -->
@@ -466,6 +551,7 @@ The microcontroller receives the time interval in the form of seconds from the R
 						<div class="yui-u">
 						<p> Fred designed the power control circuit and the rest of the hardware connections between the Pi and the ATMEGA328P. Also built the circuit. Created code for SPI interface and helped design the SPI protocol. Created the wake_check code, as well as Timer.py, INT0.py, and INT1.py. Created startup script. Debugged ultrasonic sensor hardware. Helped to create website.   </p>
 						<br/>
+						<p> Amardeep initially wrote the code for RTC and got the interface of it with the microcontroller up and running. Created the GUI on the Raspberry Pi and integrated that python GUI with the C++ code. Wrote the script for interfacing the ultrasonic sensor with the Raspberry Pi and measuring the distance. <p> </br>
 						<p>  </p>
 						</div>
 					</div>
