@@ -42,7 +42,7 @@ Thanks to Gautham Ponnu for the template!
 							<div class="yui-u">
 								<img src="images/team.jpg" style = "float:right; margin: 10px 10px 10px 10px;" alt="" width="40%" height="40%" title="The team with the Goodnight Pi"/>
 								<p> The Raspberry Pi is a powerful platform to build a variety of projects on.
-									Its full Linux operating system and large variety of peripherals make it extremely useful for a large variety of projects that a traditional microcontroller could not handle.
+									Its full Linux operating system and large variety of peripherals make it extremely useful for a large range of applications that a traditional microcontroller could not handle.
 									However, the Raspberry Pi has high power consumption, even when idle making it difficult to use in many applications that must be able to last for long periods on battery power or in any low-power situation.
 									The Raspberry Pi also includes no native support for any kind of low power or sleep mode, meaning that there is no way to mitigate this issue without additional hardware.
 									To be able to deploy Raspberry Pi's in outdoor or any low-power, long-term applications, additional power control and management hardware is needed.
@@ -50,9 +50,8 @@ Thanks to Gautham Ponnu for the template!
 
 								<br/>
 
-								<p>To address this issue we created a project that interefaces witht the Raspberry Pi and manages its power consumption by scheduling when it should be on and off. This project integrates the popular ATMEGA328
-								,power control circuitry, and a real-time-clock (RTC) with the Raspberry Pi. This allows the ATMEGA328P to control power to the Raspberry Pi, turning it off wwhen it is done with its application and turning it back
-							   on when its need to run again. The scheduling for powering on the Raspberry Pi can be based on timing or external events that are used to generate interrupts. By having the Raspberry Pi spend a significant portion of its
+								<p>To address this issue we created a project that interfaces with the Raspberry Pi and manages its power consumption by scheduling when it should be on and off. This project integrates the popular ATMEGA328 microcontroller, power control circuitry, and a real-time-clock (RTC) with the Raspberry Pi. This allows the ATMEGA328P to control power to the Raspberry Pi, turning it off when it is done with its application and turning it back
+							   on when it needs to run again. The scheduling for powering on the Raspberry Pi can be based on timing or external events that are used to generate interrupts. By having the Raspberry Pi spend a significant portion of its
 							 	time powered off instead of sitting idle, a great deal of power can be saved.</p>
 
 								<p> <br/>
@@ -206,12 +205,6 @@ After getting all the desired functionality, the next step was to integrate the 
 When the time interval was successfully configured the Atmega sent a packet back which signalled success to the Pi. This packet was processed in the guiMain.cpp file and config success!!! text was written into a .txt file. The gui would poll this file and print Config Success!! on the screen when it read the text. After reading the text, it was deleted and the file closed. The success message on the screen lasted for 5 seconds. The Ping success message was implemented in a similar way described above.
 								</p> </br>
 
-								
-								<p>
-								A snapshot of the GUI is given below: </br> </br>
-								<center><img src="images/GUI.png" alt="" title="GUI"/></center>
-								</p> </br>
-								
 								<p><h3><strong>Real Time Clock</strong></h3></p>
 
 
@@ -219,7 +212,7 @@ When the time interval was successfully configured the Atmega sent a packet back
 The microcontroller receives the time interval in the form of seconds from the Raspberry Pi and stores it. When a power cycle is going on,the microcontroller reads the time since the epoch in seconds from the RTC which is also in seconds and compares it with the time configured. This is implemented as a poll in the main loop. When the time is greater than interval, the Pi is woken up.
 								</p> </br>
 
-								<p><h3><strong>Handshaking Protocol Between the ATMEGA328P and Raspberry Pi 2</strong></h3></p>
+								<p><h3><strong>Protocol Between the ATMEGA328P and Raspberry Pi 2</strong></h3></p>
 								<p>
 										The communication between the Raspberry Pi 2 and ATMEGA328P happens through SPI. The protocol has been designed to have 9 types of packets, each of which are 11 bytes long being sent from the Pi to the Arduino and from the Arduino to the Pi. Now the ATMEGA328P has only a single SPI buffer and hence there is a unified interrupt for receive and transmit. To discriminate between receive and transmit, a start byte is used by the Raspberry Pi to enable a global variable in the Atmega which keeps track of whether a packet is being received or transmitted. </p> </br>
 
@@ -309,10 +302,70 @@ The snapshot of the cycle described above is shown below: </br> </br>
 							<div class="yui-u">
 								<p>Testing was carried out in various stages. First each portion of the hardware was tested in isolation. The Power Control Circuit was constructed and its output was measured using a multimeter to ensure that it did in fact switch with the appropriate input signals
 									 and that it could handle the needed output current. The ATMEGA328P circuit was then built and tested in isolation to ensure that the microcontroller could run properly at 8 MHz and 3.3V. This was tested using simple programs that were timing dependent, such as timed blinking of an LED, to ensure that
-									 the oscillator was set properly. SPI and I2C communication were first tested in isolation by connecting the ATMEGA328P and Raspberry Pi to oscilloscopes and verifying the waveform.
+									 the oscillator was set properly. SPI and I2C communication were first tested in isolation by connecting the ATMEGA328P and Raspberry Pi to oscilloscopes and verifying the waveform.</p>
+
+								 <br/>
+
+								 <p>Initial software testing was simplified by begnning development using an Arduino development board. This isolated software issues from any hardware issues with setting up the ATMEGA328P. Various SPI verification scripts were created on the Raspberry Pi to check the integrity of its communication
+								 with the Arduino and try to get a qualitative idea of the packet loss rate. Use of the Serial ports on the Arduino was also a critical part of software testing, allowing a great deal of helpful debugging data to be printed out. This made finding and resolving errors much simpler.
 								</p> <!--// Put Content here -->
 							</div>
 						</div><!--// Your section has ended -->
+
+						<div class="yui-gf">
+							<div class="yui-u first">
+								<h2>Parts and Budget</h2>
+							</div>
+							<div class="yui-u">
+								<center><table border="1" width="300" height="150" font-size= "6">
+								<tr align = "center">
+									<td><strong>Part Name</strong></td>
+									<td><strong>Price</strong></td>
+								</tr>
+								<tr align = "center">
+								<td>Raspberry Pi 2 Model B</td>
+								<td>$35.00</td>
+								</tr>
+								<tr align = "center">
+								<td>ATMEGA328P</td>
+								<td>$4.00</td>
+								</tr>
+								<tr align = "center">
+								<td>DS1307 Breakout Board</td>
+								<td>$7.95</td>
+								</tr>
+								<tr align = "center">
+								<td>8 MHz Crystal</td>
+								<td>$0.75</td>
+							</tr>
+								<tr align = "center">
+								<td>MCP1702 LDO Regulator</td>
+								<td>$0.48</td>
+								</tr>
+								<tr align = "center">
+								<td>FQP30N06L</td>
+								<td>$0.95</td>
+								</tr>
+								<tr align = "center">
+								<td>FQP27P06</td>
+								<td>$0.95</td>
+							</tr>
+								<tr align = "center">
+								<td>2A fuse</td>
+								<td>$0.20</td>
+							</tr>
+							<tr align = "center">
+							<td>1N5187 Diode</td>
+							<td>$0.30</td>
+							</tr>
+							<tr align = "center">
+							<td><strong>Total</strong></td>
+							<td>$50.58</td>
+							</tr>
+							</table></center>
+							</div>
+						</div>
+						</div>
 
 						<div class="yui-gf"> <!--// This is a section -->
 							<div class="yui-u first">
@@ -320,9 +373,9 @@ The snapshot of the cycle described above is shown below: </br> </br>
 							</div>
 							<div class="yui-u">
 								<p> Overall, the project was successful. The goal of the project was to create additional hardware and a lightweight software framework for the Pi
-			          that enabled power management,and we believe that the final result closely matches that vision. and We were able to implement all of the major functionality we had planned for. The ATMEGA was able to safely control power to the Pi without any damage or corruption of data. The ATMEGA was also able to accurately measure time and wake up the Pi at the appropriately configured intervals.
+			          that enabled power management,and we believe that the final result closely matches that vision. We were able to implement all of the major functionality we had planned for. The ATMEGA was able to safely control power to the Pi without any damage or corruption of data. The ATMEGA was also able to accurately measure time and wake up the Pi at the appropriately configured intervals.
 								Interrupt support was initially considered a stretch goal, but was successfully integrated and significantly increased the usefulness of the project. The Raspberry Pi also required no significant hardware modification, making the project more easily deployable for others.
-							  The Pi was able to successfully execute different scripts based on the different wakeup sources, and it was possible to easily modify the actions taken by each script, making it easy to implement a variety of applications. Theoretically, anyone should be able to deploy this on their Raspberry Pi with any applicaiton they wish with little modification, though it has only been attemped on one Raspberry Pi so far. The ATMEGA also did prove to use far less power when running by itself than the Pi did when it was idle, resulting in significant power savings.
+							  The Pi was able to successfully execute different scripts based on the different wakeup sources, and it was possible to easily modify the actions taken by each script, making it easy to implement a variety of applications. Theoretically, anyone should be able to deploy this on their Raspberry Pi with any application they wish with little modification, though it has only been attemped on one Raspberry Pi so far. The ATMEGA also did prove to use far less power when running by itself than the Pi did when it was idle, resulting in significant power savings.
 							  One area of the project that did not quite meet expectations was the build quality of the hardware. Their was not enough time to move the project to a custom PCB or even to solder onto a perfboard, so it is still only on a breadboard. Moving to a PCB would be ideal, as it would make the project much more reliable and improve its aesthetic.
 							</p>
 							</div>
@@ -364,7 +417,7 @@ The snapshot of the cycle described above is shown below: </br> </br>
 						</div>
 							<div class="yui-u">
 							All code can be found at the <a href =https://github.com/fkummer/GoodnightPi> GitHub page for GoodnightPi </a>. To help sort through the files and figure out what they all do,
-							the table below lists each file (not including executables and text files) and its Purpose.
+							the table below lists each file (not including executables and text files) and its purpose.
 
 							<center><table border="1" width="600" height="150" font-size= "6">
 							<tr align = "center">
@@ -432,6 +485,18 @@ The snapshot of the cycle described above is shown below: </br> </br>
 
 					<div class="yui-gf">
 						<div class="yui-u first">
+							<h2>Division of Work</h2>
+						</div>
+						<div class="yui-u">
+						<p> Fred designed the power control circuit and the rest of the hardware connections between the Pi and the ATMEGA328P. Also built the circuit. Created code for SPI interface and helped design the SPI protocol. Created the wake_check code, as well as Timer.py, INT0.py, and INT1.py. Created startup script. Debugged ultrasonic sensor hardware. Helped to create website.   </p>
+						<br/>
+						<p>  </p>
+						</div>
+					</div>
+					</div>
+
+					<div class="yui-gf">
+						<div class="yui-u first">
 							<h2>Contact</h2>
 						</div>
 						<div class="yui-u">
@@ -445,9 +510,13 @@ The snapshot of the cycle described above is shown below: </br> </br>
 					<div class="yui-gf">
 						<div class="yui-u first">
 							<h2>References</h2>
+
 						</div>
 						<div class="yui-u">
-						<p> Your good names. Probably Acknowledgments and Thanks </p>
+						<p> <a href="http://www.gammon.com.au/forum/?id=10892">Nick Gammon's blog on SPI with Arduino</a></p>
+						<p><a href="https://github.com/adafruit/RTClib">GitHub fork of Jeelab's RTClib Used</a></p>
+						<p><a href="https://learn.adafruit.com/ds1307-real-time-clock-breakout-board-kit/overview">Adafruit Tutorial on Using the DS1307</a></p>
+						<p><a href="https://projects.drogon.net/raspberry-pi/wiringpi/spi-library/">WiringPi SPI Library Information</a> </p>
 						</div>
 					</div>
 					</div>
@@ -457,7 +526,7 @@ The snapshot of the cycle described above is shown below: </br> </br>
 							<h2>Acknowledgements</h2>
 						</div>
 						<div class="yui-u">
-						<p> Your good names. Probably Acknowledgments and Thanks </p>
+						<p> Thanks to Professor Skovira and all the course staff for all their help with the project and throughout this year, its been a great class! Thanks also to Jeelabs and Adafruit for their helpful tutorials and libraries for the RTC. Nick Gammon's writings about using SPI with slave response on the Arduino were also extremely helpful! </p>
 						</div>
 					</div>
 					</div>
