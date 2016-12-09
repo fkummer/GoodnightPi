@@ -42,7 +42,7 @@ Thanks to Gautham Ponnu for the template!
 							<div class="yui-u">
 								<img src="images/team.jpg" style = "float:right; margin: 10px 10px 10px 10px;" alt="" width="40%" height="40%" title="The team with the Goodnight Pi"/>
 								<p> The Raspberry Pi is a powerful platform to build a variety of projects on.
-									Its full Linux operating system and large variety of peripherals make it extremely useful for a large variety of projects that a traditional microcontroller could not handle.
+									Its full Linux operating system and large variety of peripherals make it extremely useful for a large range of applications that a traditional microcontroller could not handle.
 									However, the Raspberry Pi has high power consumption, even when idle making it difficult to use in many applications that must be able to last for long periods on battery power or in any low-power situation.
 									The Raspberry Pi also includes no native support for any kind of low power or sleep mode, meaning that there is no way to mitigate this issue without additional hardware.
 									To be able to deploy Raspberry Pi's in outdoor or any low-power, long-term applications, additional power control and management hardware is needed.
@@ -50,9 +50,8 @@ Thanks to Gautham Ponnu for the template!
 
 								<br/>
 
-								<p>To address this issue we created a project that interefaces witht the Raspberry Pi and manages its power consumption by scheduling when it should be on and off. This project integrates the popular ATMEGA328
-								,power control circuitry, and a real-time-clock (RTC) with the Raspberry Pi. This allows the ATMEGA328P to control power to the Raspberry Pi, turning it off wwhen it is done with its application and turning it back
-							   on when its need to run again. The scheduling for powering on the Raspberry Pi can be based on timing or external events that are used to generate interrupts. By having the Raspberry Pi spend a significant portion of its
+								<p>To address this issue we created a project that interfaces with the Raspberry Pi and manages its power consumption by scheduling when it should be on and off. This project integrates the popular ATMEGA328 microcontroller, power control circuitry, and a real-time-clock (RTC) with the Raspberry Pi. This allows the ATMEGA328P to control power to the Raspberry Pi, turning it off when it is done with its application and turning it back
+							   on when it needs to run again. The scheduling for powering on the Raspberry Pi can be based on timing or external events that are used to generate interrupts. By having the Raspberry Pi spend a significant portion of its
 							 	time powered off instead of sitting idle, a great deal of power can be saved.</p>
 
 								<p> <br/>
@@ -213,7 +212,7 @@ When the time interval was successfully configured the Atmega sent a packet back
 The microcontroller receives the time interval in the form of seconds from the Raspberry Pi and stores it. When a power cycle is going on,the microcontroller reads the time since the epoch in seconds from the RTC which is also in seconds and compares it with the time configured. This is implemented as a poll in the main loop. When the time is greater than interval, the Pi is woken up.
 								</p> </br>
 
-								<p><h3><strong>Handshaking Protocol Between the ATMEGA328P and Raspberry Pi 2</strong></h3></p>
+								<p><h3><strong>Protocol Between the ATMEGA328P and Raspberry Pi 2</strong></h3></p>
 								<p>
 										The communication between the Raspberry Pi 2 and ATMEGA328P happens through SPI. The protocol has been designed to have 9 types of packets, each of which are 11 bytes long being sent from the Pi to the Arduino and from the Arduino to the Pi. Now the ATMEGA328P has only a single SPI buffer and hence there is a unified interrupt for receive and transmit. To discriminate between receive and transmit, a start byte is used by the Raspberry Pi to enable a global variable in the Atmega which keeps track of whether a packet is being received or transmitted. </p> </br>
 
@@ -360,9 +359,9 @@ The microcontroller receives the time interval in the form of seconds from the R
 							</div>
 							<div class="yui-u">
 								<p> Overall, the project was successful. The goal of the project was to create additional hardware and a lightweight software framework for the Pi
-			          that enabled power management,and we believe that the final result closely matches that vision. and We were able to implement all of the major functionality we had planned for. The ATMEGA was able to safely control power to the Pi without any damage or corruption of data. The ATMEGA was also able to accurately measure time and wake up the Pi at the appropriately configured intervals.
+			          that enabled power management,and we believe that the final result closely matches that vision. We were able to implement all of the major functionality we had planned for. The ATMEGA was able to safely control power to the Pi without any damage or corruption of data. The ATMEGA was also able to accurately measure time and wake up the Pi at the appropriately configured intervals.
 								Interrupt support was initially considered a stretch goal, but was successfully integrated and significantly increased the usefulness of the project. The Raspberry Pi also required no significant hardware modification, making the project more easily deployable for others.
-							  The Pi was able to successfully execute different scripts based on the different wakeup sources, and it was possible to easily modify the actions taken by each script, making it easy to implement a variety of applications. Theoretically, anyone should be able to deploy this on their Raspberry Pi with any applicaiton they wish with little modification, though it has only been attemped on one Raspberry Pi so far. The ATMEGA also did prove to use far less power when running by itself than the Pi did when it was idle, resulting in significant power savings.
+							  The Pi was able to successfully execute different scripts based on the different wakeup sources, and it was possible to easily modify the actions taken by each script, making it easy to implement a variety of applications. Theoretically, anyone should be able to deploy this on their Raspberry Pi with any application they wish with little modification, though it has only been attemped on one Raspberry Pi so far. The ATMEGA also did prove to use far less power when running by itself than the Pi did when it was idle, resulting in significant power savings.
 							  One area of the project that did not quite meet expectations was the build quality of the hardware. Their was not enough time to move the project to a custom PCB or even to solder onto a perfboard, so it is still only on a breadboard. Moving to a PCB would be ideal, as it would make the project much more reliable and improve its aesthetic.
 							</p>
 							</div>
@@ -404,7 +403,7 @@ The microcontroller receives the time interval in the form of seconds from the R
 						</div>
 							<div class="yui-u">
 							All code can be found at the <a href =https://github.com/fkummer/GoodnightPi> GitHub page for GoodnightPi </a>. To help sort through the files and figure out what they all do,
-							the table below lists each file (not including executables and text files) and its Purpose.
+							the table below lists each file (not including executables and text files) and its purpose.
 
 							<center><table border="1" width="600" height="150" font-size= "6">
 							<tr align = "center">
