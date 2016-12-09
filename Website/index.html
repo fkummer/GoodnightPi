@@ -4,7 +4,6 @@ Thanks to Gautham Ponnu for the template!
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<html>
 <head>
 
 	<title>ECE 5725 | Goodnight Pi </title>
@@ -77,7 +76,7 @@ Thanks to Gautham Ponnu for the template!
 								<h2>Design</h2> <!--// put your heading here -->
 							</div>
 							<div class="yui-u">
-								<p><h2><strong>Design Overview</strong></h2></p>
+								<h2><strong>Design Overview</strong></h2>
 								<p>
 								At a high level the design consists of four major hardware components. These are the Raspberry Pi itself, the ATMEGA328P, the RTC, and the Power Control Circuit. The Raspberry Pi wakes up when the ATMEGA328P provides it with power,
 								and performs some action or series of actions based on why it was woken up. It then shuts itself down and alerts the ATMEGA that it can turn off power to the Pi. The Raspberry Pi and ATMEGA communicate with a custom protocol using SPI. The ATMEGA tracks
@@ -111,7 +110,6 @@ Thanks to Gautham Ponnu for the template!
 							 	Any type of hardware can be attached to these interrupt pins, it simply needs to be able to generate a rising edge at the desired time. For example, in the example application built for this project interrupt 0 was attached to a button and interrupt 1 was attached to a voltage
 								divider with a photoresistor. This allowed the Pi to be woken up at any time by a user pressing the button or by increasing the light level on the photoresistor. These interrupts could be used for a wide variety of applications, such as waking the Pi up when something gets within a certain proximity
 							  or based on a variety of environmental factors, such as temperature or light. The ATMEGA controlled the power to the Raspberry Pi by simply changing the state of a GPIO pin that connected to the Power Control Circuit</p>
-								</p> <!--// Put Content here -->
 								<br/>
 								<p><h3><strong>Raspberry Pi</strong></h3></p>
 								<p>The Raspberry Pi 2 Model B was used for the project, though none of the functionality of the project relies specifically on special features of this model. Theoretically the project could be easily transferred to different models of the Raspberry Pi.
@@ -274,35 +272,8 @@ The microcontroller receives the time interval in the form of seconds from the R
 
 								<center><img src="images/atmega_cycle.jpg" alt="" width="70%" height="70%" title="ATMEGA Wakeup Cycle"/></center>
 
-								<p>
-							</div>
-
-
-						</div><!--// Your section has ended -->
-
-
-						<div class="yui-gf"> <!--// This is a section -->
-							<div class="yui-u first">
-								<h2>Testing</h2> <!--// put your heading here -->
-							</div>
-							<div class="yui-u">
-								<p>Testing was carried out in various stages. First each portion of the hardware was tested in isolation. The Power Control Circuit was constructed and its output was measured using a multimeter to ensure that it did in fact switch with the appropriate input signals
-									 and that it could handle the needed output current. The ATMEGA328P circuit was then built and tested in isolation to ensure that the microcontroller could run properly at 8 MHz and 3.3V. This was tested using simple programs that were timing dependent, such as timed blinking of an LED, to ensure that
-									 the oscillator was set properly. SPI and I2C communication were first tested in isolation by connecting the ATMEGA328P and Raspberry Pi to oscilloscopes and verifying the waveform.</p>
-
-								 <br/>
-
-								 <p>Initial software testing was simplified by begnning development using an Arduino development board. This isolated software issues from any hardware issues with setting up the ATMEGA328P. Various SPI verification scripts were created on the Raspberry Pi to check the integrity of its communication
-								 with the Arduino and try to get a qualitative idea of the packet loss rate. Use of the Serial ports on the Arduino was also a critical part of software testing, allowing a great deal of helpful debugging data to be printed out. This made finding and resolving errors much simpler.
-								</p> <!--// Put Content here -->
-							</div>
-						</div><!--// Your section has ended -->
-
-						<div class="yui-gf">
-							<div class="yui-u first">
-								<h2>Parts and Budget</h2>
-							</div>
-							<div class="yui-u">
+								<br/>
+								<p><h2><strong>Parts and Budget</strong></h2></p>
 								<center><table border="1" width="300" height="150" font-size= "6">
 								<tr align = "center">
 									<td><strong>Part Name</strong></td>
@@ -350,8 +321,27 @@ The microcontroller receives the time interval in the form of seconds from the R
 							</tr>
 							</table></center>
 							</div>
-						</div>
-						</div>
+
+
+						</div><!--// Your section has ended -->
+
+
+						<div class="yui-gf"> <!--// This is a section -->
+							<div class="yui-u first">
+								<h2>Testing</h2> <!--// put your heading here -->
+							</div>
+							<div class="yui-u">
+								<p>Testing was carried out in various stages. First each portion of the hardware was tested in isolation. The Power Control Circuit was constructed and its output was measured using a multimeter to ensure that it did in fact switch with the appropriate input signals
+									 and that it could handle the needed output current. The ATMEGA328P circuit was then built and tested in isolation to ensure that the microcontroller could run properly at 8 MHz and 3.3V. This was tested using simple programs that were timing dependent, such as timed blinking of an LED, to ensure that
+									 the oscillator was set properly. SPI and I2C communication were first tested in isolation by connecting the ATMEGA328P and Raspberry Pi to oscilloscopes and verifying the waveform.</p>
+
+								 <br/>
+
+								 <p>Initial software testing was simplified by begnning development using an Arduino development board. This isolated software issues from any hardware issues with setting up the ATMEGA328P. Various SPI verification scripts were created on the Raspberry Pi to check the integrity of its communication
+								 with the Arduino and try to get a qualitative idea of the packet loss rate. Use of the Serial ports on the Arduino was also a critical part of software testing, allowing a great deal of helpful debugging data to be printed out. This made finding and resolving errors much simpler.
+								</p> <!--// Put Content here -->
+							</div>
+						</div><!--// Your section has ended -->
 
 						<div class="yui-gf"> <!--// This is a section -->
 							<div class="yui-u first">
@@ -495,7 +485,7 @@ The microcontroller receives the time interval in the form of seconds from the R
 
 					<div class="yui-gf">
 						<div class="yui-u first">
-							<h2>References</h2>
+							<h2>References and Acknowledgements</h2>
 
 						</div>
 						<div class="yui-u">
@@ -503,15 +493,7 @@ The microcontroller receives the time interval in the form of seconds from the R
 						<p><a href="https://github.com/adafruit/RTClib">GitHub fork of Jeelab's RTClib Used</a></p>
 						<p><a href="https://learn.adafruit.com/ds1307-real-time-clock-breakout-board-kit/overview">Adafruit Tutorial on Using the DS1307</a></p>
 						<p><a href="https://projects.drogon.net/raspberry-pi/wiringpi/spi-library/">WiringPi SPI Library Information</a> </p>
-						</div>
-					</div>
-					</div>
-
-					<div class="yui-gf">
-						<div class="yui-u first">
-							<h2>Acknowledgements</h2>
-						</div>
-						<div class="yui-u">
+						<br/>
 						<p> Thanks to Professor Skovira and all the course staff for all their help with the project and throughout this year, its been a great class! Thanks also to Jeelabs and Adafruit for their helpful tutorials and libraries for the RTC. Nick Gammon's writings about using SPI with slave response on the Arduino were also extremely helpful! </p>
 						</div>
 					</div>
