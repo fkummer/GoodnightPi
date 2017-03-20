@@ -38,12 +38,12 @@ int main(){
   while(repeat){
 	  sleep(5);
 	  sleepState = digitalRead(SLEEP_GPIO);
-	  //printf("hi\n");
+	  printf("hi\n");
 
 	  if(sleepState){
 		unsigned char resp[11];
 		wakeRequest(resp);
-		
+		printf("in\n");
 		//It is a wake response
 		if(resp[0] == 0x01){
 			int i;
@@ -74,20 +74,20 @@ int main(){
 				printf("Timer\n");
 				printf("%ld\n", timeInterval);
 				repeat = 0;
-				system("python /home/pi/final/GoodnightPi/Timer.py");
+				system("python Timer.py");
 
 			}else{
 				//If interrupt 0 set us off
 				if(int0 != 0){
 					printf("Int0\n");
 					repeat = 0;
-					system("python /home/pi/final/GoodnightPi/INT0.py");
+					system("python INT0.py");
 				}else{
 					//If interrupt 1 set us off
 					if(int1){
 						printf("Int1\n");
 						repeat = 0;
-						system("python /home/pi/final/GoodnightPi/INT1.py");
+						system("python INT1.py");
 					}else{
 						printf("Mystery...\n");
 						repeat = 0;
