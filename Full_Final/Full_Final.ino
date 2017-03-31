@@ -2,6 +2,7 @@
 #include "Wire.h"
 #include <RTClib.h>
 #include <SPI.h>
+#include <EEPROM.h>
 
 #define NOT_AN_INTERRUPT -1
 
@@ -216,6 +217,7 @@ void processPacket(volatile unsigned char * buff){
       tempInterval = 0x00000000;
       for(i = 4; i > 0; i--){
         tempInterval = tempInterval | buff[i];
+        
         if(i > 1){
           tempInterval = tempInterval << 8;
         }
@@ -225,7 +227,13 @@ void processPacket(volatile unsigned char * buff){
       if(tempInterval == 0x00000000){
         //Don't change the timeInterval
       }else{
+        //Set interval
         timeInterval = tempInterval;
+
+        //Save interval
+        for(i = 4; i > 0; i--){
+          EEPROM.write(1+i, buff[i]);
+        }
       }
       
       Serial.println("Configured");
@@ -236,6 +244,7 @@ void processPacket(volatile unsigned char * buff){
         Serial.println("\n\ntoggle int0");
         Serial.print("INT0:");
         int0 ^= 1;
+        EEPROM.write(0, int0);
         Serial.println(int0);
         Serial.println("\n\n");
         
@@ -245,6 +254,7 @@ void processPacket(volatile unsigned char * buff){
       if(buff[7] == 1){
         Serial.println("toggle int1");
         int1 ^= 1;
+        EEPROM.write(1, int1);
       }
       
       break;
@@ -425,17 +435,45 @@ void setup() {
   pinMode(INT0, INPUT);
   pinMode(INT1, INPUT);
   
-  
+//  EEPROM.write(0, 0);
+//  EEPROM.write(1, 0);
+//  EEPROM.write(2, 0);
+//  EEPROM.write(3, 0);
+//  EEPROM.write(4, 0);
+//  EEPROM.write(5, 0);
 
+  
+  int0 = EEPROM.read(0);
+  int1 = EEPROM.read(1);
+
+  int i;
+  //Assemble the time interval!
+  long setupInterval;
+  setupInterval = 0x00000000;
+  byte timeByte;
+  
+  for(i = 4; i > 0; i--){
+    timeByte = EEPROM.read(1+i);
+    setupInterval = setupInterval | timeByte;
+    if(i > 1){
+      setupInterval = setupInterval << 8;
+    }
+  }
+  timeInterval = setupInterval;
   
   attachInterrupt(digitalPinToInterrupt(INT0), int0_handler, RISING);
   attachInterrupt(digitalPinToInterrupt(INT1), int1_handler, RISING);
  
-  digitalWrite(GREEN, LOW);
-  digitalWrite(YELLOW, HIGH);
+  digitalWrite(YELLOW, int0);
+  digitalWrite(GREEN, int1);
+  if(timeInterval > 0){
+    digitalWrite(LED, HIGH);
+  }else{
+    digitalWrite(LED, LOW);
+  }
+  
   delay(6000);
-  digitalWrite(YELLOW, LOW);
-  digitalWrite(GREEN, HIGH);
+  
  
 
   turnOnPower();
@@ -444,6 +482,21 @@ void setup() {
 
 void loop() {
   alive = digitalRead(ALIVE);
+
+  if(alive){
+    digitalWrite(YELLOW, int0);
+    digitalWrite(GREEN, int1);
+    if(timeInterval > 0){
+      digitalWrite(LED, HIGH);
+    }else{
+      digitalWrite(LED, LOW);
+    }
+  }else{
+    digitalWrite(YELLOW, LOW);
+    digitalWrite(GREEN, LOW);
+    digitalWrite(LED, LOW);
+  }
+  
   if(gotoSleep){
     if(!alive){
       Serial.println("Beep");
@@ -468,11 +521,11 @@ void loop() {
   //Time to wakeup!
   if((checkWakeup() == 1 || int0_woke || int1_woke) && (wait_for_wake == 1) ){
      Serial.println("BRING!");
-     ledState = ledState ^ 1;
+     //ledState = ledState ^ 1;
      wait_for_wake = 0;
      //detachInterrupt(digitalPinToInterrupt(INT0));
      //detachInterrupt(digitalPinToInterrupt(INT1));
-     digitalWrite(LED,ledState);
+     //digitalWrite(LED,ledState);
      turnOnPower();
   }else{
   
