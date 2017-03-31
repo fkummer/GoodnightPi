@@ -52,10 +52,12 @@ byte wait_for_wake = 0;
 
 #define LED   7
 #define PACKET_LEN 11
-#define ALIVE 5
-#define PWR_CNTRL 4
+#define ALIVE 4
+#define PWR_CNTRL 9
 #define INT0 2
 #define INT1 3
+#define GREEN 6
+#define YELLOW 5
 
 // SPI interrupt routine
 //Capture what is coming in. 
@@ -73,12 +75,15 @@ ISR (SPI_STC_vect)
     //Serial.println(SPDR);
     SPI_buff[pos] = SPDR;
     pos++;
+    
     if(cnt >= PACKET_LEN){
+      Serial.println("itsa me");
       incoming = 0;
       outgoing = 1;
     }
   }else{//Look for start byte
     if(SPDR == 0xFE){
+      //Serial.println("start");
       incoming = 1;
       
       outgoing = 0;
@@ -185,7 +190,8 @@ void fillPayload(byte opCode, unsigned char * buff){
 //Set things as needed.
 void processPacket(volatile unsigned char * buff){
   unsigned char opCode = buff[0];
-  
+  Serial.println("process");
+  Serial.println(opCode);
   switch(opCode){
     case 0x00://WAKE_REQ
       //We dont need to do anything!
@@ -227,8 +233,12 @@ void processPacket(volatile unsigned char * buff){
       
       //into enable/disable
       if(buff[5] == 1){
-        Serial.println("toggle int0");
+        Serial.println("\n\ntoggle int0");
+        Serial.print("INT0:");
         int0 ^= 1;
+        Serial.println(int0);
+        Serial.println("\n\n");
+        
       }
       
       //int1 enable/disable
@@ -290,6 +300,7 @@ char checkWakeup(){
 void handleSPI(){
   //Received a full packet, lets print it
   //We should also get our response ready!
+  
   if(cnt == PACKET_LEN){  
     //Print out the packet
     byte ind;
@@ -310,6 +321,7 @@ void handleSPI(){
     cnt = 0;
 
     if(outgoing){
+      Serial.println("wow");
       processPacket(recv_packet);
       resp_buff[0] = getOpCode(recv_packet[0]);
       fillPayload(resp_buff[0], resp_buff); 
@@ -331,6 +343,7 @@ void int0_handler(){
   //If interrupts are allowed to wake us
   Serial.println("whoa cool");
   if(int0 == 1){
+    Serial.println("neat");
     int int0_cnt = 0;
     while(digitalRead(INT0) && (int0_cnt < 500)){
       int0_cnt = int0_cnt + 1;
@@ -350,6 +363,7 @@ void int1_handler(){
   //If interrupts are allowed to wake us
   Serial.println("super neat");
   if(int1 == 1){
+    Serial.println("wooooooowwweee");
     int int1_cnt = 0;
     while(digitalRead(INT1) && (int1_cnt < 500)){
       int1_cnt = int1_cnt + 1;
@@ -365,12 +379,31 @@ void int1_handler(){
   }
 }
 
+
+//Gradually turn on to avoid sudden draw
+void turnOnSlow(){
+  int val = 0;
+
+  while(val < 255){
+    val += 1;
+    analogWrite(PWR_CNTRL, val);
+    delay(40);
+  }
+  
+}
+
+
+//Gradually turn on to avoid sudden draw
+void turnOnPower(){
+  digitalWrite(PWR_CNTRL, HIGH);
+}
+
 void setup() {
   Serial.begin(115200);
   
   
   //SPI setup
-  SPI.setClockDivider(SPI_CLOCK_DIV32);
+  SPI.setClockDivider(SPI_CLOCK_DIV16);
   
   // have to send on master in, *slave out*
   pinMode(MISO, OUTPUT);
@@ -385,21 +418,32 @@ void setup() {
   rtc.begin();
 
   pinMode(LED, OUTPUT);
+  pinMode(GREEN, OUTPUT);
+  pinMode(YELLOW, OUTPUT);
   pinMode(PWR_CNTRL, OUTPUT);
   pinMode(ALIVE, INPUT);
   pinMode(INT0, INPUT);
   pinMode(INT1, INPUT);
   
+  
+
+  
   attachInterrupt(digitalPinToInterrupt(INT0), int0_handler, RISING);
   attachInterrupt(digitalPinToInterrupt(INT1), int1_handler, RISING);
-  
-  delay(5);
+ 
+  digitalWrite(GREEN, LOW);
+  digitalWrite(YELLOW, HIGH);
+  delay(6000);
+  digitalWrite(YELLOW, LOW);
+  digitalWrite(GREEN, HIGH);
+ 
+
+  turnOnPower();
 }
 
 
 void loop() {
   alive = digitalRead(ALIVE);
-  
   if(gotoSleep){
     if(!alive){
       Serial.println("Beep");
@@ -429,7 +473,7 @@ void loop() {
      //detachInterrupt(digitalPinToInterrupt(INT0));
      //detachInterrupt(digitalPinToInterrupt(INT1));
      digitalWrite(LED,ledState);
-     digitalWrite(PWR_CNTRL, HIGH);
+     turnOnPower();
   }else{
   
   }
