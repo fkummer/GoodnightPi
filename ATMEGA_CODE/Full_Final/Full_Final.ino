@@ -434,7 +434,7 @@ void setup() {
   pinMode(ALIVE, INPUT);
   pinMode(INT0, INPUT);
   pinMode(INT1, INPUT);
-  
+ 
 //  EEPROM.write(0, 0);
 //  EEPROM.write(1, 0);
 //  EEPROM.write(2, 0);
